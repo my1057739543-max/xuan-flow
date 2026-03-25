@@ -1,0 +1,39 @@
+# Xuan-Flow Configuration
+
+models:
+  - name: qwen-max
+    display_name: Qwen Max (Alibaba)
+    model: qwen-max
+    api_key: $DASHSCOPE_API_KEY
+    base_url: https://dashscope.aliyuncs.com/compatible-mode/v1
+  - name: qwen-plus
+    display_name: Qwen Plus (Alibaba)
+    model: qwen-plus
+    api_key: $DASHSCOPE_API_KEY
+    base_url: https://dashscope.aliyuncs.com/compatible-mode/v1
+  - name: qwen-72b-free
+    display_name: Qwen 2.5 72B (OpenRouter Free)
+    model: alibaba/qwen-2.5-72b-instruct:free
+    api_key: $OPENROUTER_API_KEY
+    base_url: https://openrouter.ai/api/v1
+  - name: deepseek-chat
+    display_name: DeepSeek Chat (V3)
+    model: deepseek-chat
+    api_key: $DEEPSEEK_API_KEY
+    base_url: https://api.deepseek.com/v1
+
+memory:
+  enabled: true
+  storage_path: .xuan-flow/memory.json
+  max_facts: 50
+  max_injection_facts: 10
+
+subagents:
+  enabled: true
+
+mcp_servers:
+  # Example stdio MCP block (disabled by default, just template)
+  # my_server:
+  #   command: "npx"
+  #   args: ["-y", "@modelcontextprotocol/server-everything"]
+  #   transport: "stdio"

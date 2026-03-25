@@ -1,0 +1,6 @@
+# Xuan-Flow
+.env
+.xuan-flow/
+__pycache__/
+*.pyc
+.venv/

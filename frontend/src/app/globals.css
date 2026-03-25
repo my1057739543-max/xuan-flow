@@ -1,0 +1,121 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #000000;
+  --color-foreground: #ededed;
+}
+
+@layer base {
+  body {
+    background-color: #0f0c29;
+    color: #ffffff;
+    @apply antialiased selection:bg-purple-500/30;
+  }
+}
+
+/* Stunning Aurora Background Animations */
+@keyframes aurora-1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(5vw, -5vh) scale(1.1); }
+  66% { transform: translate(-5vw, 5vh) scale(0.9); }
+}
+
+@keyframes aurora-2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(-5vw, 5vh) scale(0.9); }
+  66% { transform: translate(5vw, -5vh) scale(1.1); }
+}
+
+@keyframes aurora-3 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(8vw, 8vh) scale(1.05); }
+}
+
+.bg-aurora {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  background: #0f0c29;
+  overflow: hidden;
+}
+
+.bg-aurora::before,
+.bg-aurora::after,
+.bg-aurora-inner {
+  content: "";
+  position: absolute;
+  width: 120vw;
+  height: 120vh;
+  top: -10vh;
+  left: -10vw;
+  filter: blur(100px);
+  opacity: 0.6;
+  border-radius: 50%;
+}
+
+.bg-aurora::before {
+  background: radial-gradient(circle at 10% 30%, rgba(138, 43, 226, 0.8), transparent 40%);
+  animation: aurora-1 15s ease-in-out infinite alternate;
+}
+
+.bg-aurora::after {
+  background: radial-gradient(circle at 80% 80%, rgba(45, 212, 191, 0.8), transparent 40%);
+  animation: aurora-2 20s ease-in-out infinite alternate;
+}
+
+.bg-aurora-inner {
+  background: radial-gradient(circle at 90% 10%, rgba(236, 72, 153, 0.7), transparent 40%);
+  animation: aurora-3 18s ease-in-out infinite alternate;
+}
+
+/* Glassmorphism Utilities */
+.glass {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+.glass-panel {
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.glass-bubble-user {
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.4) 0%, rgba(138, 43, 226, 0.4) 100%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+}
+
+.glass-bubble-ai {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* Custom Scrollbar for chat area */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
