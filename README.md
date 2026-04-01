@@ -1,5 +1,7 @@
 # 🌊 Xuan-Flow (玄流)
 
+[English](README.md) | [简体中文](README_CN.md)
+
 A lightweight, state-driven Multi-Agent framework inspired by Deer-Flow. Built for flexibility, long-term memory, and seamless tool integration.
 
 ## 🚀 Overview
