@@ -74,7 +74,7 @@ export function ChatArea() {
     setIsTyping(true);
 
     try {
-      const response = await fetch("http://localhost:8000/api/chat/sync", {
+      const response = await fetch("http://localhost:8000/api/chat/stream", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -85,10 +85,58 @@ export function ChatArea() {
       });
 
       if (!response.ok) throw new Error("Network response was not ok");
-      const data = await response.json();
-      setMessages((prev) => [...prev, { role: "assistant", content: data.content }]);
+      if (!response.body) throw new Error("No response body");
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+      let aiContent = "";
+      let hasStarted = false;
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        
+        const lines = buffer.split(/\r?\n/);
+        buffer = lines.pop() || "";
+
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (!trimmed || !trimmed.startsWith("data:")) continue;
+          
+          const dataStr = trimmed.slice(5).trim();
+          if (dataStr === "[DONE]") continue;
+
+          try {
+            const data = JSON.parse(dataStr);
+            if (data.content) {
+              aiContent += data.content;
+              
+              if (!hasStarted) {
+                // First chunk: add the message to the list
+                setMessages((prev) => [...prev, { role: "assistant", content: aiContent }]);
+                hasStarted = true;
+              } else {
+                // Subsequent chunks: update the last message
+                setMessages((prev) => {
+                  const newMessages = [...prev];
+                  const lastMsg = newMessages[newMessages.length - 1];
+                  if (lastMsg && lastMsg.role === "assistant") {
+                    lastMsg.content = aiContent;
+                  }
+                  return newMessages;
+                });
+              }
+            }
+          } catch (e) {
+            // Ignore parse errors
+          }
+        }
+      }
     } catch (error) {
-      // If error was not a cancellation, show error message
+      console.error("Streaming error:", error);
       setMessages((prev) => [...prev, { role: "assistant", content: "Error communicating with context engine." }]);
     } finally {
       setIsTyping(false);
@@ -203,7 +251,7 @@ export function ChatArea() {
               ))}
             </AnimatePresence>
 
-            {isTyping && (
+            {isTyping && messages[messages.length - 1]?.role !== "assistant" && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col gap-2 items-start">
                  <span className="text-[10px] uppercase tracking-widest font-bold px-3 text-cyan-300 drop-shadow-md">Xuan-Flow</span>
                  <div className="glass-bubble-ai border border-white/20 rounded-[28px] rounded-tl-sm px-6 py-5 flex gap-2 items-center shadow-lg">

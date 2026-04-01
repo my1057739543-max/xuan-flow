@@ -32,8 +32,7 @@ subagents:
   enabled: true
 
 mcp_servers:
-  # Example stdio MCP block (disabled by default, just template)
-  # my_server:
+  # everything:
   #   command: "npx"
   #   args: ["-y", "@modelcontextprotocol/server-everything"]
   #   transport: "stdio"
