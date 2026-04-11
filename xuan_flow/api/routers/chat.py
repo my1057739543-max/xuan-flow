@@ -142,6 +142,7 @@ async def chat_stream(request: ChatRequest, background_tasks: BackgroundTasks):
     async def _stream_generator() -> AsyncGenerator[dict, None]:
         task = asyncio.current_task()
         RUNNING_TASKS[thread_id] = task
+        assistant_content = ""
         
         try:
             agent = await make_lead_agent(model_name=request.model)
@@ -152,9 +153,11 @@ async def chat_stream(request: ChatRequest, background_tasks: BackgroundTasks):
                 config={"recursion_limit": 50}
             ):
                 if isinstance(chunk, AIMessage) and chunk.content:
+                    chunk_content = chunk.content if isinstance(chunk.content, str) else str(chunk.content)
+                    assistant_content += chunk_content
                     yield {
                         "event": "message",
-                        "data": json.dumps({"content": chunk.content})
+                        "data": json.dumps({"content": chunk_content})
                     }
                     
             yield {
@@ -175,6 +178,11 @@ async def chat_stream(request: ChatRequest, background_tasks: BackgroundTasks):
                 "data": json.dumps({"error": str(e)})
             }
         finally:
+            if assistant_content.strip() and lc_messages:
+                update_memory_background(
+                    [*lc_messages, AIMessage(content=assistant_content)],
+                    thread_id,
+                )
             if RUNNING_TASKS.get(thread_id) == task:
                 del RUNNING_TASKS[thread_id]
     return EventSourceResponse(_stream_generator())

@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+build/
+dist/
+*.egg-info/
+
+# Frontend
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+
+# Environment and Data
+.env
+.xuan-flow/
+.gemini/
+.agent/
+.agents/
+
+# Logs
+*.log
+trace.json
+
+# Git
+.git/
+.gitignore

@@ -12,11 +12,13 @@ type Message = {
   content: string;
 };
 
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
 export function ChatArea() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  const [availableModels, setAvailableModels] = useState<{name: string, display_name: string}[]>([]);
+  const [availableModels, setAvailableModels] = useState<{ name: string, display_name: string }[]>([]);
   const [selectedModel, setSelectedModel] = useState<string>("");
   const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -30,7 +32,7 @@ export function ChatArea() {
   useEffect(() => {
     const fetchModels = async () => {
       try {
-        const res = await fetch("http://localhost:8000/api/management/available_models");
+        const res = await fetch(`${API_BASE}/api/management/available_models`);
         if (res.ok) {
           const data = await res.json();
           setAvailableModels(data.models || []);
@@ -51,7 +53,7 @@ export function ChatArea() {
 
   const handleCancel = async () => {
     try {
-      await fetch("http://localhost:8000/api/chat/cancel", {
+      await fetch(`${API_BASE}/api/chat/cancel`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ thread_id: "default-thread" }),
@@ -74,7 +76,7 @@ export function ChatArea() {
     setIsTyping(true);
 
     try {
-      const response = await fetch("http://localhost:8000/api/chat/stream", {
+      const response = await fetch(`${API_BASE}/api/chat/stream`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -98,14 +100,14 @@ export function ChatArea() {
         if (done) break;
 
         buffer += decoder.decode(value, { stream: true });
-        
+
         const lines = buffer.split(/\r?\n/);
         buffer = lines.pop() || "";
 
         for (const line of lines) {
           const trimmed = line.trim();
           if (!trimmed || !trimmed.startsWith("data:")) continue;
-          
+
           const dataStr = trimmed.slice(5).trim();
           if (dataStr === "[DONE]") continue;
 
@@ -113,7 +115,7 @@ export function ChatArea() {
             const data = JSON.parse(dataStr);
             if (data.content) {
               aiContent += data.content;
-              
+
               if (!hasStarted) {
                 // First chunk: add the message to the list
                 setMessages((prev) => [...prev, { role: "assistant", content: aiContent }]);
@@ -152,7 +154,7 @@ export function ChatArea() {
 
   return (
     <div className="flex flex-col h-full w-full relative bg-transparent">
-      
+
       {/* Header Bar */}
       <div className="absolute top-0 w-full px-8 py-5 flex items-center justify-between z-20">
         <div className="flex items-center gap-4">
@@ -163,18 +165,18 @@ export function ChatArea() {
 
           {availableModels.length > 0 && (
             <div className="relative group">
-               <select 
+              <select
                 value={selectedModel}
                 onChange={(e) => setSelectedModel(e.target.value)}
                 className="appearance-none bg-black/40 border border-white/10 backdrop-blur-xl text-white/90 text-[11px] font-bold py-2 px-4 pr-10 rounded-full focus:outline-none focus:border-cyan-500/50 transition-all cursor-pointer hover:bg-black/60 shadow-lg tracking-wide uppercase"
-               >
-                 {availableModels.map(m => (
-                   <option key={m.name} value={m.name} className="bg-slate-900 text-white">{m.display_name}</option>
-                 ))}
-               </select>
-               <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-50 group-hover:opacity-100 transition-opacity">
-                 <ChevronDown className="w-3 h-3 text-white" />
-               </div>
+              >
+                {availableModels.map(m => (
+                  <option key={m.name} value={m.name} className="bg-slate-900 text-white">{m.display_name}</option>
+                ))}
+              </select>
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-50 group-hover:opacity-100 transition-opacity">
+                <ChevronDown className="w-3 h-3 text-white" />
+              </div>
             </div>
           )}
         </div>
@@ -188,17 +190,17 @@ export function ChatArea() {
       {/* Messages Canvas */}
       <div className="flex-1 overflow-y-auto w-full scroll-smooth px-4 sm:px-8 z-10 pt-24 pb-48 text-white">
         {messages.length === 0 ? (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, filter: "blur(10px)", scale: 0.95 }} animate={{ opacity: 1, filter: "blur(0px)", scale: 1 }} transition={{ duration: 1 }}
             className="h-full flex flex-col items-center justify-center text-white p-8 relative"
           >
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-cyan-500/20 rounded-full blur-[100px] pointer-events-none" />
-            
+
             <div className="mb-8 p-6 rounded-3xl glass-panel relative overflow-hidden group">
-               <div className="absolute inset-0 bg-gradient-to-tr from-fuchsia-500/30 to-cyan-500/30 opacity-50 group-hover:opacity-100 transition-opacity duration-1000" />
-               <Sparkles className="w-12 h-12 text-white relative z-10 drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]" />
+              <div className="absolute inset-0 bg-gradient-to-tr from-fuchsia-500/30 to-cyan-500/30 opacity-50 group-hover:opacity-100 transition-opacity duration-1000" />
+              <Sparkles className="w-12 h-12 text-white relative z-10 drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]" />
             </div>
-            
+
             <h3 className="text-3xl font-bold tracking-tight text-white drop-shadow-[0_4px_20px_rgba(255,255,255,0.4)] text-center">Awaken the Engine.</h3>
             <p className="text-base mt-4 max-w-md text-center leading-relaxed text-white/70 font-medium drop-shadow-md">
               Xuan-Flow is fully integrated with your workspace. Cast a command into the aurora.
@@ -223,7 +225,7 @@ export function ChatArea() {
                   )}>
                     {msg.role === "assistant" ? "Xuan-Flow" : "You"}
                   </span>
-                  
+
                   {/* Message Body */}
                   <div
                     className={cn(
@@ -236,7 +238,7 @@ export function ChatArea() {
                     {msg.role === "assistant" && (
                       <div className="absolute top-0 left-0 w-32 h-32 bg-cyan-400/20 rounded-full blur-2xl transform -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
                     )}
-                    
+
                     <div className="relative z-10">
                       {msg.role === "assistant" ? (
                         <div className="prose prose-invert prose-p:leading-[1.8] prose-p:text-white/90 prose-pre:bg-black/40 prose-pre:backdrop-blur-xl prose-pre:border prose-pre:border-white/10 prose-pre:shadow-2xl max-w-none prose-headings:font-bold prose-headings:text-white prose-a:text-cyan-300 hover:prose-a:text-cyan-200 prose-code:text-cyan-200 prose-code:bg-white/10 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md prose-strong:text-white drop-shadow-sm">
@@ -253,12 +255,12 @@ export function ChatArea() {
 
             {isTyping && messages[messages.length - 1]?.role !== "assistant" && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col gap-2 items-start">
-                 <span className="text-[10px] uppercase tracking-widest font-bold px-3 text-cyan-300 drop-shadow-md">Xuan-Flow</span>
-                 <div className="glass-bubble-ai border border-white/20 rounded-[28px] rounded-tl-sm px-6 py-5 flex gap-2 items-center shadow-lg">
-                    <motion.span animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.2, 0.8] }} transition={{ repeat: Infinity, duration: 1.5, delay: 0 }} className="w-2 h-2 bg-white/80 rounded-full shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
-                    <motion.span animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.2, 0.8] }} transition={{ repeat: Infinity, duration: 1.5, delay: 0.2 }} className="w-2 h-2 bg-white/80 rounded-full shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
-                    <motion.span animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.2, 0.8] }} transition={{ repeat: Infinity, duration: 1.5, delay: 0.4 }} className="w-2 h-2 bg-white/80 rounded-full shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
-                 </div>
+                <span className="text-[10px] uppercase tracking-widest font-bold px-3 text-cyan-300 drop-shadow-md">Xuan-Flow</span>
+                <div className="glass-bubble-ai border border-white/20 rounded-[28px] rounded-tl-sm px-6 py-5 flex gap-2 items-center shadow-lg">
+                  <motion.span animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.2, 0.8] }} transition={{ repeat: Infinity, duration: 1.5, delay: 0 }} className="w-2 h-2 bg-white/80 rounded-full shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
+                  <motion.span animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.2, 0.8] }} transition={{ repeat: Infinity, duration: 1.5, delay: 0.2 }} className="w-2 h-2 bg-white/80 rounded-full shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
+                  <motion.span animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.2, 0.8] }} transition={{ repeat: Infinity, duration: 1.5, delay: 0.4 }} className="w-2 h-2 bg-white/80 rounded-full shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
+                </div>
               </motion.div>
             )}
             <div ref={bottomRef} className="h-4" />
@@ -313,7 +315,7 @@ export function ChatArea() {
 function Sparkles(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-      <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/>
+      <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" />
     </svg>
   );
 }

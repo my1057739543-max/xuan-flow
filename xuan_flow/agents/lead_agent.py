@@ -16,7 +16,12 @@ from langgraph.prebuilt import create_react_agent
 
 from xuan_flow.agents.thread_state import ThreadState
 from xuan_flow.config.app_config import get_app_config
-from xuan_flow.memory.store import format_memory_for_injection, get_memory_data
+from xuan_flow.memory.store import (
+    format_memory_for_injection,
+    get_memory_data,
+    rebuild_working_memory,
+    get_working_memory_markdown,
+)
 from xuan_flow.models.factory import create_chat_model
 from xuan_flow.subagents.registry import get_subagent_names
 from xuan_flow.tools.registry import get_available_tools
@@ -178,6 +183,21 @@ Your current execution plan's state:
         messages.append(SystemMessage(content=reminder_content))
     else:
         logger.info("Context: No active tasks in state.")
+
+    # Build and inject L2 working memory for the current request.
+    try:
+        config = get_app_config()
+        if config.memory.enabled:
+            latest_user_query = _extract_latest_user_query(messages)
+            rebuild_working_memory(
+                query=latest_user_query,
+                max_facts=config.memory.max_injection_facts,
+            )
+            working_memory = get_working_memory_markdown().strip()
+            if working_memory:
+                messages.append(SystemMessage(content=f"<working_memory>\n{working_memory}\n</working_memory>"))
+    except Exception as e:
+        logger.warning("Failed to build working memory: %s", e)
     
     # Prepare the actual prompt (first message should be system)
     if not any(isinstance(m, SystemMessage) for m in messages):
@@ -199,6 +219,17 @@ Your current execution plan's state:
         "messages": [response],
         "trace": [trace_entry]
     }
+
+
+def _extract_latest_user_query(messages: list) -> str:
+    """Best-effort extraction of latest user message for memory ranking."""
+    for msg in reversed(messages):
+        role = type(msg).__name__.lower()
+        if "human" in role:
+            content = getattr(msg, "content", "")
+            if isinstance(content, str) and content.strip():
+                return content.strip()
+    return ""
 
 
 async def _call_tools(state: ThreadState, tools_list):

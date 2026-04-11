@@ -74,6 +74,50 @@ async def get_memory():
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@router.get("/working-memory")
+async def get_working_memory():
+    """Get the current L2 working memory markdown content."""
+    try:
+        from xuan_flow.memory.store import get_working_memory_markdown
+        content = get_working_memory_markdown()
+        return {
+            "status": "success",
+            "working_memory": content,
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/memory/clear-atomic")
+async def clear_atomic_memory():
+    """Clear L1 atomic memory JSON only. Does not clear MySQL."""
+    try:
+        from xuan_flow.memory.store import clear_atomic_memory as clear_atomic_memory_store
+        ok = clear_atomic_memory_store()
+        if not ok:
+            raise HTTPException(status_code=500, detail="Failed to clear atomic memory")
+        return {"status": "success", "detail": "Atomic memory cleared"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/memory/clear-working")
+async def clear_working_memory():
+    """Clear L2 memory.md only. Does not clear MySQL."""
+    try:
+        from xuan_flow.memory.store import clear_working_memory_markdown
+        ok = clear_working_memory_markdown()
+        if not ok:
+            raise HTTPException(status_code=500, detail="Failed to clear working memory")
+        return {"status": "success", "detail": "Working memory markdown cleared"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @router.get("/tools")
 async def get_tools():
     """List all available tools (including MCP and Subagents)."""

@@ -57,8 +57,16 @@ DEEPSEEK_API_KEY=your_key
 OPENROUTER_API_KEY=your_key
 DASHSCOPE_API_KEY=your_key
 TAVILY_API_KEY=your_key
+MYSQL_PASSWORD=root
+MYSQL_DATABASE=xuan_flow
 ```
 Review `config.yaml` to customize model selection and memory settings.
+
+To enable the 3-layer memory pipeline (L1 JSON + L2 memory.md + L3 MySQL), set:
+```yaml
+memory:
+	mysql_enabled: true
+```
 
 ### 4. Running the Project
 
@@ -81,6 +89,15 @@ cd frontend
 npm run dev
 ```
 Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+#### One-command Full Stack (Frontend + Backend + MySQL)
+```bash
+docker compose up --build
+```
+This starts:
+- MySQL on `3306`
+- Backend API on `8000`
+- Frontend on `3000`
 
 ## 📄 License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

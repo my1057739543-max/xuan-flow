@@ -38,8 +38,16 @@ class MemoryConfig(BaseModel):
     """Configuration for the memory system."""
     enabled: bool = True
     storage_path: str = ".xuan-flow/memory.json"
+    working_memory_path: str = ".xuan-flow/memory.md"
     max_facts: int = 50
     max_injection_facts: int = 10
+    mysql_enabled: bool = False
+    mysql_host: str = "127.0.0.1"
+    mysql_port: int = 3306
+    mysql_user: str = "root"
+    mysql_password: str = ""
+    mysql_database: str = "xuan_flow"
+    mysql_table: str = "memory_fact"
 
     model_config = ConfigDict(extra="allow")
 

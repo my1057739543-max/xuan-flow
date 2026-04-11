@@ -9,14 +9,18 @@ import { cn } from "@/lib/utils";
 type Skill = { name: string; description: string; category: string; enabled: boolean };
 type Tool = { name: string; description: string };
 type MemoryFact = { content: string; category: string; confidence: number };
+type WorkingMemory = { content: string };
 type WorkspaceFile = { name: string; size: number; modified_at: number };
 type Task = { content: string; status: "pending" | "in_progress" | "completed" };
 type TraceEntry = { node: string; duration: number; timestamp: number; tools?: string[] };
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 export function Sidebar() {
   const [skills, setSkills] = useState<Skill[]>([]);
   const [tools, setTools] = useState<Tool[]>([]);
   const [memory, setMemory] = useState<MemoryFact[]>([]);
+  const [workingMemory, setWorkingMemory] = useState<string>("");
   const [workspaceFiles, setWorkspaceFiles] = useState<WorkspaceFile[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [performance, setPerformance] = useState<TraceEntry[]>([]);
@@ -28,22 +32,26 @@ export function Sidebar() {
   const [openWorkspace, setOpenWorkspace] = useState(true);
   const [openTasks, setOpenTasks] = useState(true);
   const [openPerformance, setOpenPerformance] = useState(false);
-  const [previewFile, setPreviewFile] = useState<{name: string; content: string} | null>(null);
+  const [previewFile, setPreviewFile] = useState<{ name: string; content: string } | null>(null);
+  const [clearingAtomic, setClearingAtomic] = useState(false);
+  const [clearingWorking, setClearingWorking] = useState(false);
 
   const fetchAllData = async () => {
     try {
-      const [skillsRes, toolsRes, memoryRes, workspaceRes, tasksRes, perfRes] = await Promise.all([
-        fetch("http://localhost:8000/api/management/skills"),
-        fetch("http://localhost:8000/api/management/tools"),
-        fetch("http://localhost:8000/api/management/memory"),
-        fetch("http://localhost:8000/api/workspace/files"),
-        fetch("http://localhost:8000/api/management/tasks"),
-        fetch("http://localhost:8000/api/management/performance"),
+      const [skillsRes, toolsRes, memoryRes, workingMemoryRes, workspaceRes, tasksRes, perfRes] = await Promise.all([
+        fetch(`${API_BASE}/api/management/skills`),
+        fetch(`${API_BASE}/api/management/tools`),
+        fetch(`${API_BASE}/api/management/memory`),
+        fetch(`${API_BASE}/api/management/working-memory`),
+        fetch(`${API_BASE}/api/workspace/files`),
+        fetch(`${API_BASE}/api/management/tasks`),
+        fetch(`${API_BASE}/api/management/performance`),
       ]);
 
       if (skillsRes.ok) setSkills((await skillsRes.json()).skills || []);
       if (toolsRes.ok) setTools((await toolsRes.json()).tools || []);
       if (memoryRes.ok) setMemory((await memoryRes.json()).memory?.facts || []);
+      if (workingMemoryRes.ok) setWorkingMemory((await workingMemoryRes.json()).working_memory || "");
       if (workspaceRes.ok) setWorkspaceFiles((await workspaceRes.json()).files || []);
       if (tasksRes.ok) setTasks((await tasksRes.json()).tasks || []);
       if (perfRes.ok) setPerformance((await perfRes.json()).performance || []);
@@ -54,9 +62,67 @@ export function Sidebar() {
     }
   };
 
+  const openFilePreview = async (filename: string) => {
+    try {
+      const res = await fetch(`${API_BASE}/api/workspace/files/${encodeURIComponent(filename)}`);
+      if (res.ok) {
+        const data = await res.json();
+        setPreviewFile({ name: filename, content: data.content });
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const deleteWorkspaceFile = async (e: React.MouseEvent, filename: string) => {
+    e.stopPropagation();
+    try {
+      const res = await fetch(`${API_BASE}/api/workspace/files/${encodeURIComponent(filename)}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        fetchAllData();
+      }
+    } catch (error) {
+      console.error("Failed to delete workspace file", error);
+    }
+  };
+
+  const clearAtomicMemory = async () => {
+    if (clearingAtomic) return;
+    if (!window.confirm("Clear all atomic memory facts (JSON)? This will not clear MySQL.")) return;
+    setClearingAtomic(true);
+    try {
+      const res = await fetch(`${API_BASE}/api/management/memory/clear-atomic`, { method: "POST" });
+      if (!res.ok) throw new Error("Failed to clear atomic memory");
+      await fetchAllData();
+    } catch (error) {
+      console.error("Failed to clear atomic memory", error);
+      window.alert("Failed to clear atomic memory.");
+    } finally {
+      setClearingAtomic(false);
+    }
+  };
+
+  const clearWorkingMemory = async () => {
+    if (clearingWorking) return;
+    if (!window.confirm("Clear working memory markdown (memory.md)? This will not clear MySQL.")) return;
+    setClearingWorking(true);
+    try {
+      const res = await fetch(`${API_BASE}/api/management/memory/clear-working`, { method: "POST" });
+      if (!res.ok) throw new Error("Failed to clear working memory");
+      await fetchAllData();
+    } catch (error) {
+      console.error("Failed to clear working memory", error);
+      window.alert("Failed to clear working memory markdown.");
+    } finally {
+      setClearingWorking(false);
+    }
+  };
+
   useEffect(() => {
     fetchAllData();
-    
+
     let intervalId: any;
     const startPolling = (ms: number) => {
       if (intervalId) clearInterval(intervalId);
@@ -82,34 +148,8 @@ export function Sidebar() {
     };
   }, []);
 
-  const openFilePreview = async (filename: string) => {
-    try {
-      const res = await fetch(`http://localhost:8000/api/workspace/files/${encodeURIComponent(filename)}`);
-      if (res.ok) {
-        const data = await res.json();
-        setPreviewFile({ name: filename, content: data.content });
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  const deleteWorkspaceFile = async (e: React.MouseEvent, filename: string) => {
-    e.stopPropagation();
-    try {
-      const res = await fetch(`http://localhost:8000/api/workspace/files/${encodeURIComponent(filename)}`, {
-        method: "DELETE",
-      });
-      if (res.ok) {
-        fetchAllData();
-      }
-    } catch (error) {
-      console.error("Failed to delete workspace file", error);
-    }
-  };
-
   const SectionHeader = ({ title, icon, isOpen, toggle, count }: any) => (
-    <button 
+    <button
       onClick={toggle}
       className="flex items-center justify-between w-full group py-2 px-1 text-white/70 hover:text-white transition-colors"
     >
@@ -141,8 +181,8 @@ export function Sidebar() {
           </div>
           <p className="text-white/60 text-[11px] font-medium tracking-wide">Autonomous Engine</p>
         </div>
-        <button 
-          onClick={fetchAllData} 
+        <button
+          onClick={fetchAllData}
           disabled={loading}
           className="p-1.5 mt-1 text-white/50 hover:text-white hover:bg-white/10 rounded-xl transition-all disabled:opacity-50"
           title="Sync Data"
@@ -161,11 +201,11 @@ export function Sidebar() {
           <>
             {/* EXECUTION PLAN */}
             <div>
-              <SectionHeader 
-                title="Execution Plan" 
-                icon={<BrainCircuit className="w-3.5 h-3.5 text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]" />} 
-                isOpen={openTasks} 
-                toggle={() => setOpenTasks(!openTasks)} 
+              <SectionHeader
+                title="Execution Plan"
+                icon={<BrainCircuit className="w-3.5 h-3.5 text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]" />}
+                isOpen={openTasks}
+                toggle={() => setOpenTasks(!openTasks)}
                 count={tasks.length}
               />
               <AnimatePresence>
@@ -191,8 +231,8 @@ export function Sidebar() {
                             </div>
                             <span className={cn(
                               "text-[12px] leading-tight transition-colors",
-                              t.status === "completed" ? "text-white/40 line-through" : 
-                              t.status === "in_progress" ? "text-cyan-200 font-medium" : "text-white/70"
+                              t.status === "completed" ? "text-white/40 line-through" :
+                                t.status === "in_progress" ? "text-cyan-200 font-medium" : "text-white/70"
                             )}>
                               {t.content}
                             </span>
@@ -206,11 +246,11 @@ export function Sidebar() {
             </div>
             {/* EXECUTION TIMELINE (Performance Monitor) */}
             <div>
-              <SectionHeader 
-                title="Execution Timeline" 
-                icon={<Timer className="w-3.5 h-3.5 text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]" />} 
-                isOpen={openPerformance} 
-                toggle={() => setOpenPerformance(!openPerformance)} 
+              <SectionHeader
+                title="Execution Timeline"
+                icon={<Timer className="w-3.5 h-3.5 text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]" />}
+                isOpen={openPerformance}
+                toggle={() => setOpenPerformance(!openPerformance)}
                 count={performance.length}
               />
               <AnimatePresence>
@@ -228,7 +268,7 @@ export function Sidebar() {
                                   <div className="absolute left-2.5 top-4 bottom-[-10px] w-[1px] bg-white/10" />
                                 )}
                                 <div className="absolute left-1.5 top-1.5 w-2 h-2 rounded-full bg-white/20 border border-white/10" />
-                                
+
                                 <div className="flex flex-col gap-1">
                                   <div className="flex items-center justify-between text-[11px]">
                                     <span className={cn(
@@ -239,9 +279,9 @@ export function Sidebar() {
                                     </span>
                                     <span className="text-white/40 font-mono">{entry.duration.toFixed(2)}s</span>
                                   </div>
-                                  
+
                                   <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                                    <motion.div 
+                                    <motion.div
                                       initial={{ width: 0 }}
                                       animate={{ width: `${Math.min((entry.duration / 10) * 100, 100)}%` }}
                                       className={cn(
@@ -278,13 +318,33 @@ export function Sidebar() {
               </AnimatePresence>
             </div>
 
+            {/* WORKING MEMORY MD */}
+            <div>
+              <SectionHeader
+                title="Working Memory MD"
+                icon={<FileText className="w-3.5 h-3.5 text-amber-300 drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]" />}
+                isOpen={true}
+                toggle={() => {}}
+                count={workingMemory.trim() ? 1 : 0}
+              />
+              <div className="pt-2 pb-3">
+                {workingMemory.trim() ? (
+                  <div className="rounded-2xl border border-amber-400/20 bg-black/20 backdrop-blur-md p-3 text-[11px] leading-relaxed text-white/80 whitespace-pre-wrap max-h-64 overflow-y-auto custom-scrollbar">
+                    {workingMemory}
+                  </div>
+                ) : (
+                  <div className="text-white/40 text-[11px] italic px-2">No working memory markdown generated yet.</div>
+                )}
+              </div>
+            </div>
+
             {/* WORKSPACE */}
             <div>
-              <SectionHeader 
-                title="Workspace" 
-                icon={<FolderCode className="w-3.5 h-3.5 text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.8)]" />} 
-                isOpen={openWorkspace} 
-                toggle={() => setOpenWorkspace(!openWorkspace)} 
+              <SectionHeader
+                title="Workspace"
+                icon={<FolderCode className="w-3.5 h-3.5 text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.8)]" />}
+                isOpen={openWorkspace}
+                toggle={() => setOpenWorkspace(!openWorkspace)}
                 count={workspaceFiles.length}
               />
               <AnimatePresence>
@@ -295,8 +355,8 @@ export function Sidebar() {
                         <div className="text-white/40 text-[11px] italic px-2">Local sandbox is empty.</div>
                       ) : (
                         workspaceFiles.map((f, i) => (
-                          <div 
-                            key={i} 
+                          <div
+                            key={i}
                             onClick={() => openFilePreview(f.name)}
                             className="flex items-center justify-between py-2 px-3 rounded-xl hover:bg-white/10 cursor-pointer transition-all group border border-transparent hover:border-white/20 hover:shadow-lg backdrop-blur-sm"
                           >
@@ -306,7 +366,7 @@ export function Sidebar() {
                               </div>
                               <span className="text-white/80 truncate text-[13px] font-medium group-hover:text-white transition-colors drop-shadow-sm pr-2">{f.name}</span>
                             </div>
-                            <button 
+                            <button
                               onClick={(e) => deleteWorkspaceFile(e, f.name)}
                               className="w-7 h-7 flex-shrink-0 flex items-center justify-center rounded-lg opacity-0 group-hover:opacity-100 hover:bg-rose-500/20 text-rose-300 transition-all border border-transparent hover:border-rose-500/30"
                               title="Delete File"
@@ -324,11 +384,11 @@ export function Sidebar() {
 
             {/* SKILLS */}
             <div>
-              <SectionHeader 
-                title="Enabled Skills" 
-                icon={<Library className="w-3.5 h-3.5 text-fuchsia-400 drop-shadow-[0_0_8px_rgba(232,121,249,0.8)]" />} 
-                isOpen={openSkills} 
-                toggle={() => setOpenSkills(!openSkills)} 
+              <SectionHeader
+                title="Enabled Skills"
+                icon={<Library className="w-3.5 h-3.5 text-fuchsia-400 drop-shadow-[0_0_8px_rgba(232,121,249,0.8)]" />}
+                isOpen={openSkills}
+                toggle={() => setOpenSkills(!openSkills)}
                 count={skills.length}
               />
               <AnimatePresence>
@@ -357,11 +417,11 @@ export function Sidebar() {
 
             {/* MCP TOOLS */}
             <div>
-              <SectionHeader 
-                title="Context Tools" 
-                icon={<Wrench className="w-3.5 h-3.5 text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]" />} 
-                isOpen={openTools} 
-                toggle={() => setOpenTools(!openTools)} 
+              <SectionHeader
+                title="Context Tools"
+                icon={<Wrench className="w-3.5 h-3.5 text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]" />}
+                isOpen={openTools}
+                toggle={() => setOpenTools(!openTools)}
                 count={tools.length}
               />
               <AnimatePresence>
@@ -385,17 +445,35 @@ export function Sidebar() {
 
             {/* MEMORY */}
             <div>
-              <SectionHeader 
-                title="Memory Core" 
-                icon={<BrainCircuit className="w-3.5 h-3.5 text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]" />} 
-                isOpen={openMemory} 
-                toggle={() => setOpenMemory(!openMemory)} 
+              <SectionHeader
+                title="Memory Core"
+                icon={<BrainCircuit className="w-3.5 h-3.5 text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]" />}
+                isOpen={openMemory}
+                toggle={() => setOpenMemory(!openMemory)}
                 count={memory.length}
               />
               <AnimatePresence>
                 {openMemory && (
                   <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
                     <div className="pt-2 pb-3 space-y-2">
+                      <div className="flex items-center gap-2 px-1 pb-1">
+                        <button
+                          onClick={clearAtomicMemory}
+                          disabled={clearingAtomic}
+                          className="text-[10px] px-2.5 py-1.5 rounded-lg border border-rose-400/30 bg-rose-500/10 text-rose-200 hover:bg-rose-500/20 transition-colors disabled:opacity-60"
+                          title="Clear L1 atomic JSON memory"
+                        >
+                          {clearingAtomic ? "Clearing..." : "Clear Atomic"}
+                        </button>
+                        <button
+                          onClick={clearWorkingMemory}
+                          disabled={clearingWorking}
+                          className="text-[10px] px-2.5 py-1.5 rounded-lg border border-amber-400/30 bg-amber-500/10 text-amber-200 hover:bg-amber-500/20 transition-colors disabled:opacity-60"
+                          title="Clear L2 memory.md working memory"
+                        >
+                          {clearingWorking ? "Clearing..." : "Clear Working MD"}
+                        </button>
+                      </div>
                       {memory.length === 0 ? (
                         <div className="text-white/40 text-[11px] italic px-2">Entity state is empty.</div>
                       ) : (
@@ -418,11 +496,11 @@ export function Sidebar() {
 
       <AnimatePresence>
         {previewFile && (
-          <FilePreview 
-            isOpen={!!previewFile} 
-            filename={previewFile.name} 
-            content={previewFile.content} 
-            onClose={() => setPreviewFile(null)} 
+          <FilePreview
+            isOpen={!!previewFile}
+            filename={previewFile.name}
+            content={previewFile.content}
+            onClose={() => setPreviewFile(null)}
           />
         )}
       </AnimatePresence>
