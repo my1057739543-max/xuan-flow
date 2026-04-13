@@ -20,26 +20,57 @@ def create_skill_workflow(
         instructions: The detailed markdown instructions, rules, and procedures the agent should follow when this skill is equipped.
     """
     try:
-        # Resolve skills directory relative to the project root (assumed to be where run_api.py is)
+                # Resolve skills directory relative to project root.
         current_dir = Path.cwd()
-        skills_dir = current_dir / "skills"
+                skills_dir = current_dir / "skills" / "custom"
         skills_dir.mkdir(parents=True, exist_ok=True)
 
-        file_path = skills_dir / f"{skill_name}.md"
-        
-        # Frontmatter
-        frontmatter = {
-            "name": skill_name.replace("_", " ").title(),
+                safe_name = "".join(ch if ch.isalnum() or ch in "-_" else "-" for ch in skill_name.strip().lower()).strip("-")
+                if not safe_name:
+                        return "Failed to create skill workflow: invalid skill_name"
+
+                skill_dir = skills_dir / safe_name
+                scripts_dir = skill_dir / "scripts"
+                scripts_dir.mkdir(parents=True, exist_ok=True)
+
+                config_path = skill_dir / "config.yaml"
+                doc_path = skill_dir / "SKILL.md"
+                script_path = scripts_dir / "main.js"
+
+                config_data = {
+                        "name": safe_name,
             "description": description,
+                        "entrypoint": "main.js",
+                        "enabled": True,
+                        "invocation_hint": f"Use this skill when user asks for {safe_name} workflow execution.",
         }
-        
-        yaml_content = yaml.dump(frontmatter, sort_keys=False, allow_unicode=True)
-        
-        full_content = f"---\n{yaml_content}---\n\n{instructions}\n"
-        
-        with open(file_path, "w", encoding="utf-8") as f:
-            f.write(full_content)
-            
-        return f"Successfully created skill workflow '{skill_name}' at {file_path}. The skill will be available upon reload."
+
+                config_path.write_text(yaml.dump(config_data, sort_keys=False, allow_unicode=True), encoding="utf-8")
+                doc_path.write_text(f"# {safe_name}\n\n{instructions}\n", encoding="utf-8")
+
+                script_content = """const fs = require('fs');
+
+function readInput() {
+    try {
+        const data = fs.readFileSync(0, 'utf8');
+        return data && data.trim() ? JSON.parse(data) : {};
+    } catch (err) {
+        return {};
+    }
+}
+
+const input = readInput();
+const result = {
+    ok: true,
+    skill: process.env.SKILL_NAME || 'custom-skill',
+    received: input,
+    message: 'Skill script executed successfully.'
+};
+
+process.stdout.write(JSON.stringify(result));
+"""
+                script_path.write_text(script_content, encoding="utf-8")
+
+                return f"Successfully created skill workflow '{safe_name}' at {skill_dir}. The skill will be available upon reload."
     except Exception as e:
         return f"Failed to create skill workflow: {e}"

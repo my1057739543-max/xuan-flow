@@ -11,7 +11,11 @@ class Skill:
     description: str
     license: str | None
     skill_dir: Path
-    skill_file: Path
+    skill_file: Path | None
+    config_file: Path | None
+    scripts_dir: Path | None
+    entrypoint: str | None
+    invocation_hint: str | None
     relative_path: Path
     category: str  # 'public' or 'custom'
     enabled: bool = False
@@ -22,14 +26,20 @@ class Skill:
         path = self.relative_path.as_posix()
         return "" if path == "." else path
 
-    def get_workspace_path(self, workspace_base_path: str = ".xuan-flow/skills") -> str:
-        """Get the logical path to this skill in the workspace."""
-        category_base = f"{workspace_base_path}/{self.category}"
-        skill_path = self.skill_path
-        if skill_path:
-            return f"{category_base}/{skill_path}"
-        return category_base
+    def get_workspace_path(self) -> str:
+        """Get absolute directory path for this skill."""
+        return str(self.skill_dir.resolve())
 
-    def get_workspace_file_path(self, workspace_base_path: str = ".xuan-flow/skills") -> str:
-        """Get the full logical path to this skill's SKILL.md file."""
-        return f"{self.get_workspace_path(workspace_base_path)}/SKILL.md"
+    def get_workspace_file_path(self) -> str:
+        """Get the best readable skill file path for read_file tool."""
+        if self.skill_file is not None:
+            return str(self.skill_file.resolve())
+        if self.config_file is not None:
+            return str(self.config_file.resolve())
+        return str(self.skill_dir.resolve())
+
+    def get_entry_script_path(self) -> str | None:
+        """Get absolute entry script path if this skill has executable scripts."""
+        if self.scripts_dir is None or not self.entrypoint:
+            return None
+        return str((self.scripts_dir / self.entrypoint).resolve())

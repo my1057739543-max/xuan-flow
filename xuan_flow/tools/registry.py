@@ -20,6 +20,7 @@ async def get_available_tools(subagent_enabled: bool = False, exclude_task: bool
     from xuan_flow.tools.task_management import manage_tasks, get_task_list
     from xuan_flow.tools.clarification_tool import ask_clarification
     from xuan_flow.tools.skill_creator import create_skill_workflow
+    from xuan_flow.tools.skill_runner import run_skill
     from xuan_flow.tools.image_inspector import inspect_image_metadata
     from xuan_flow.mcp.tools import get_mcp_tools
 
@@ -33,6 +34,7 @@ async def get_available_tools(subagent_enabled: bool = False, exclude_task: bool
         get_task_list,
         ask_clarification, 
         create_skill_workflow, 
+        run_skill,
         inspect_image_metadata
     ]
 

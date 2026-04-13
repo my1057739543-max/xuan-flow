@@ -3,8 +3,7 @@
 import os
 from pathlib import Path
 
-from xuan_flow.config.app_config import get_app_config
-from xuan_flow.skills.parser import parse_skill_file
+from xuan_flow.skills.parser import parse_skill_dir, parse_skill_file
 from xuan_flow.skills.types import Skill
 
 
@@ -23,16 +22,12 @@ def load_skills(enabled_only: bool = False) -> list[Skill]:
     Returns:
         List of Skill objects, sorted by name.
     """
-    config = get_app_config()
-    # In xuan-flow, skills are always enabled for simplicity or read from config if we add it
-    # For now, we just scan and assume all are enabled if they parse correctly
-    
     skills_path = get_skills_root_path()
     
     if not skills_path.exists():
         return []
 
-    skills = []
+    discovered: dict[str, Skill] = {}
 
     # Scan public and custom directories
     for category in ["public", "custom"]:
@@ -42,19 +37,46 @@ def load_skills(enabled_only: bool = False) -> list[Skill]:
 
         for current_root, dir_names, file_names in os.walk(category_path):
             dir_names[:] = sorted(name for name in dir_names if not name.startswith("."))
-            if "SKILL.md" not in file_names:
+            current_dir = Path(current_root)
+            relative_path = current_dir.relative_to(category_path)
+
+            skill: Skill | None = None
+
+            # New format first: directory with config.yaml + scripts/
+            if "config.yaml" in file_names:
+                skill = parse_skill_dir(current_dir, category=category, relative_path=relative_path)
+            elif "SKILL.md" in file_names:
+                # Legacy format compatibility
+                skill_file = current_dir / "SKILL.md"
+                skill = parse_skill_file(skill_file, category=category, relative_path=relative_path)
+
+            if skill is None:
                 continue
 
-            skill_file = Path(current_root) / "SKILL.md"
-            relative_path = skill_file.parent.relative_to(category_path)
-
-            skill = parse_skill_file(skill_file, category=category, relative_path=relative_path)
-            if skill:
-                # Default true for now in xuan-flow 
-                skill.enabled = True
-                skills.append(skill)
+            # Conflict policy: custom skill overrides public skill with same name
+            previous = discovered.get(skill.name)
+            if previous is not None:
+                if previous.category == "public" and skill.category == "custom":
+                    discovered[skill.name] = skill
+                else:
+                    # Keep the first one in all other cases for deterministic behavior
+                    continue
+            else:
+                discovered[skill.name] = skill
 
     # Sort by name for consistent ordering
-    skills.sort(key=lambda s: s.name)
+    skills = sorted(discovered.values(), key=lambda s: s.name)
+
+    if enabled_only:
+        skills = [s for s in skills if s.enabled]
 
     return skills
+
+
+def get_skill_by_name(name: str, enabled_only: bool = True) -> Skill | None:
+    """Get a skill by name (case-insensitive exact match)."""
+    target = name.strip().lower()
+    for skill in load_skills(enabled_only=enabled_only):
+        if skill.name.lower() == target:
+            return skill
+    return None

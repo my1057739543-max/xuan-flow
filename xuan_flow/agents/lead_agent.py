@@ -110,13 +110,22 @@ def _get_skills_prompt_section() -> str:
             return ""
 
         skill_items = "\n".join(
-            f"    <skill>\n        <name>{s.name}</name>\n        <description>{s.description}</description>\n        <location>{s.get_workspace_file_path()}</location>\n    </skill>"
+            (
+                f"    <skill>\n"
+                f"        <name>{s.name}</name>\n"
+                f"        <description>{s.description}</description>\n"
+                f"        <location>{s.get_workspace_file_path()}</location>\n"
+                f"        <entry_script>{s.get_entry_script_path() or ''}</entry_script>\n"
+                f"        <invocation_hint>{s.invocation_hint or ''}</invocation_hint>\n"
+                f"    </skill>"
+            )
             for s in skills
         )
 
         return f"""<skill_system>
 You have access to predefined skills that provide workflows and instructions for specific tasks.
-When a query matches a skill, you MUST call `read_file` on the skill's file path to learn how to proceed.
+When a query matches a skill, first call `read_file` on the skill location to learn the workflow.
+If the skill has an entry script, execute it via `run_skill` with JSON args.
 <available_skills>
 {skill_items}
 </available_skills>

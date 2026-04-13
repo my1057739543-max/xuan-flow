@@ -9,6 +9,7 @@ RUN sed -i 's/deb.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list.d/debia
 # 2. Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
+    nodejs \
     && rm -rf /var/lib/apt/lists/*
 
 # 3. Use a faster mirror for pip and upgrade build tools

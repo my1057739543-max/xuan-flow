@@ -1,0 +1,5 @@
+name: text-utils-basic
+description: Analyze plain text and return simple counts (characters, words, lines) for quick drafting and review.
+entrypoint: main.js
+enabled: true
+invocation_hint: Use this skill when the user asks for text statistics, quick text analysis, or readability checks.

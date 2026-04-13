@@ -10,6 +10,64 @@ from xuan_flow.skills.types import Skill
 logger = logging.getLogger(__name__)
 
 
+def parse_skill_dir(skill_dir: Path, category: str, relative_path: Path) -> Skill | None:
+    """Parse a directory-based skill that contains config.yaml and scripts/.
+
+    Expected structure:
+    - <skill_dir>/config.yaml
+    - <skill_dir>/scripts/<entrypoint>
+    - optional <skill_dir>/SKILL.md for human-readable workflow guidance
+    """
+    try:
+        config_file = skill_dir / "config.yaml"
+        if not config_file.exists():
+            return None
+
+        raw = yaml.safe_load(config_file.read_text(encoding="utf-8")) or {}
+        if not isinstance(raw, dict):
+            logger.warning("Invalid config format in %s", config_file)
+            return None
+
+        name = raw.get("name")
+        description = raw.get("description")
+        entrypoint = raw.get("entrypoint")
+
+        if not name or not description or not entrypoint:
+            logger.warning("Missing required fields (name, description, entrypoint) in %s", config_file)
+            return None
+
+        scripts_dir = skill_dir / "scripts"
+        script_path = (scripts_dir / str(entrypoint)).resolve()
+        if not scripts_dir.exists() or not scripts_dir.is_dir():
+            logger.warning("Missing scripts directory for %s", config_file)
+            return None
+        if scripts_dir.resolve() not in script_path.parents or not script_path.exists():
+            logger.warning("Invalid or missing entrypoint '%s' in %s", entrypoint, config_file)
+            return None
+
+        skill_doc = skill_dir / "SKILL.md"
+
+        enabled = bool(raw.get("enabled", True))
+
+        return Skill(
+            name=str(name),
+            description=str(description),
+            license=raw.get("license"),
+            skill_dir=skill_dir,
+            skill_file=skill_doc if skill_doc.exists() else None,
+            config_file=config_file,
+            scripts_dir=scripts_dir,
+            entrypoint=str(entrypoint),
+            invocation_hint=(str(raw.get("invocation_hint")) if raw.get("invocation_hint") else None),
+            relative_path=relative_path,
+            category=category,
+            enabled=enabled,
+        )
+    except Exception as e:
+        logger.error("Failed to parse skill directory %s: %s", skill_dir, e)
+        return None
+
+
 def parse_skill_file(skill_file: Path, category: str, relative_path: Path) -> Skill | None:
     """Parse a SKILL.md file and extract metadata from YAML frontmatter.
 
@@ -43,7 +101,7 @@ def parse_skill_file(skill_file: Path, category: str, relative_path: Path) -> Sk
         try:
             metadata = yaml.safe_load(frontmatter_text) or {}
         except yaml.YAMLError as e:
-            logger.warning("Invalid YAML frontmatter in %s: %e", skill_file, e)
+            logger.warning("Invalid YAML frontmatter in %s: %s", skill_file, e)
             return None
 
         name = metadata.get("name")
@@ -59,10 +117,15 @@ def parse_skill_file(skill_file: Path, category: str, relative_path: Path) -> Sk
             license=metadata.get("license"),
             skill_dir=skill_file.parent,
             skill_file=skill_file,
+            config_file=None,
+            scripts_dir=None,
+            entrypoint=None,
+            invocation_hint=None,
             relative_path=relative_path,
             category=category,
+            enabled=True,
         )
 
     except Exception as e:
-        logger.error("Failed to parse skill file %s: %e", skill_file, e)
+        logger.error("Failed to parse skill file %s: %s", skill_file, e)
         return None
