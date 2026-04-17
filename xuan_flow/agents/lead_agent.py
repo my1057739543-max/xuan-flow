@@ -8,6 +8,7 @@ and middleware chain.
 import logging
 from datetime import datetime
 import json
+import re
 
 from langgraph.graph import StateGraph, START, END
 from langgraph.prebuilt import ToolNode
@@ -27,6 +28,59 @@ from xuan_flow.subagents.registry import get_subagent_names
 from xuan_flow.tools.registry import get_available_tools
 
 logger = logging.getLogger(__name__)
+
+
+def _save_tasks_file(tasks: list[dict]) -> None:
+    """Persist tasks for frontend Execution Plan sync."""
+    try:
+        from xuan_flow.tools.task_management import TASKS_FILE
+
+        TASKS_FILE.parent.mkdir(parents=True, exist_ok=True)
+        with open(TASKS_FILE, "w", encoding="utf-8") as f:
+            json.dump(tasks, f, indent=2, ensure_ascii=False)
+    except Exception as e:
+        logger.warning("Failed to persist bootstrap tasks: %s", e)
+
+
+def _infer_initial_tasks(query: str) -> list[dict]:
+    """Infer a minimal execution plan from the user query.
+
+    This is a deterministic fallback when the model skips manage_tasks.
+    """
+    text = (query or "").strip()
+    if not text:
+        return []
+
+    # Prefer explicit numbered/bulleted instructions when present.
+    lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
+    extracted: list[str] = []
+    for ln in lines:
+        if re.match(r"^(\d+[\.)]|[-*•])\s+", ln):
+            extracted.append(re.sub(r"^(\d+[\.)]|[-*•])\s+", "", ln).strip())
+
+    if extracted:
+        tasks = [
+            {"content": item[:180], "status": "pending"}
+            for item in extracted[:8]
+            if item
+        ]
+        if tasks:
+            tasks[0]["status"] = "in_progress"
+        return tasks
+
+    # Generic fallback for short/simple prompts.
+    short = re.sub(r"\s+", " ", text)[:180]
+    return [{"content": f"Handle request: {short}", "status": "in_progress"}]
+
+
+def _mark_tasks_completed(tasks: list[dict]) -> list[dict]:
+    """Mark all active tasks as completed for final UI state."""
+    completed = []
+    for task in tasks:
+        item = dict(task)
+        item["status"] = "completed"
+        completed.append(item)
+    return completed
 
 
 # ── System Prompt ────────────────────────────────────────────────────────────
@@ -219,15 +273,40 @@ Your current execution plan's state:
     new_trace = state.get("trace", []) + [trace_entry]
     save_trace(new_trace)
     
+    updated_tasks = tasks
     if response.tool_calls:
         logger.info(f"Outcome: Agent decided to CALL TOOLS: {[t['name'] for t in response.tool_calls]}")
     else:
         logger.info("Outcome: Agent provided a DIRECT RESPONSE.")
+        if tasks:
+            # Deterministic fallback: close remaining tasks on final answer.
+            updated_tasks = _mark_tasks_completed(tasks)
+            _save_tasks_file(updated_tasks)
         
     return {
         "messages": [response],
-        "trace": [trace_entry]
+        "trace": [trace_entry],
+        "tasks": updated_tasks,
     }
+
+
+async def _bootstrap_tasks(state: ThreadState):
+    """Initialize execution tasks before the first model turn.
+
+    This guarantees Execution Plan visibility even if the model skips manage_tasks.
+    """
+    existing = state.get("tasks", [])
+    if existing:
+        return {}
+
+    query = _extract_latest_user_query(list(state.get("messages", [])))
+    initial_tasks = _infer_initial_tasks(query)
+    if not initial_tasks:
+        return {}
+
+    _save_tasks_file(initial_tasks)
+    logger.info("Bootstrap: seeded %s task(s) before first model turn.", len(initial_tasks))
+    return {"tasks": initial_tasks}
 
 
 def _extract_latest_user_query(messages: list) -> str:
@@ -314,6 +393,9 @@ async def make_lead_agent(
     workflow = StateGraph(ThreadState)
     
     # Define node wrappers to handle closures and async execution correctly
+    async def bootstrap_tasks_node(state: ThreadState):
+        return await _bootstrap_tasks(state)
+
     async def agent_node(state: ThreadState):
         return await _call_model(state, model_with_tools, system_prompt)
 
@@ -321,11 +403,13 @@ async def make_lead_agent(
         return await _call_tools(state, tools)
     
     # Add nodes
+    workflow.add_node("bootstrap_tasks", bootstrap_tasks_node)
     workflow.add_node("agent", agent_node)
     workflow.add_node("tools", tools_node)
     
     # Add edges
-    workflow.add_edge(START, "agent")
+    workflow.add_edge(START, "bootstrap_tasks")
+    workflow.add_edge("bootstrap_tasks", "agent")
     workflow.add_conditional_edges("agent", _should_continue, {"tools": "tools", END: END})
     workflow.add_edge("tools", "agent")
 
