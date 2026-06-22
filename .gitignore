@@ -5,3 +5,10 @@ __pycache__/
 *.pyc
 .venv/
 
+self-introduction.md
+xuan-flow-agent-interview.md
+xuan-flow-interview-speaking.md
+xuan_flow.egg-info/PKG-INFO
+xuan_flow.egg-info/SOURCES.txt
+xuan_flow.egg-info/requires.txt
+xuan_flow.egg-info/top_level.txt

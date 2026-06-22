@@ -1,7 +1,7 @@
 import asyncio
 import json
 import logging
-from typing import AsyncGenerator, Dict
+from typing import AsyncGenerator
 
 from fastapi import APIRouter, HTTPException, BackgroundTasks
 from pydantic import BaseModel
@@ -11,6 +11,13 @@ from langchain_core.messages import HumanMessage, AIMessage, BaseMessage
 
 from xuan_flow.agents.lead_agent import make_lead_agent
 from xuan_flow.agents.middlewares.memory_middleware import update_memory_background
+from xuan_flow.sessions.store import (
+    list_sessions,
+    get_session,
+    save_session,
+    delete_session,
+    generate_session_id,
+)
 from xuan_flow.tools.task_management import clear_tasks
 from xuan_flow.utils.trace_logger import clear_trace
 
@@ -18,7 +25,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 # Track running tasks by thread_id
-RUNNING_TASKS: Dict[str, asyncio.Task] = {}
+RUNNING_TASKS: dict[str, asyncio.Task] = {}
 
 
 class ChatMessage(BaseModel):
@@ -28,9 +35,7 @@ class ChatMessage(BaseModel):
 
 class ChatRequest(BaseModel):
     messages: list[ChatMessage]
-    # Thread ID for future session management
     thread_id: str | None = None
-    # Optional model name override
     model: str | None = None
 
 
@@ -46,17 +51,63 @@ def _convert_messages(api_msgs: list[ChatMessage]) -> list[BaseMessage]:
             lc_msgs.append(HumanMessage(content=m.content))
         elif m.role == "assistant":
             lc_msgs.append(AIMessage(content=m.content))
-        # ignoring other roles for now in simplified flow
     return lc_msgs
+
+
+def _to_api_messages(lc_msgs: list[BaseMessage]) -> list[dict]:
+    """Convert LangChain messages to API-friendly dict list."""
+    result = []
+    for m in lc_msgs:
+        role = "user" if isinstance(m, HumanMessage) else "assistant"
+        content = m.content if isinstance(m.content, str) else str(m.content)
+        result.append({"role": role, "content": content})
+    return result
+
+
+def _auto_save_session(thread_id: str, api_messages: list[dict]) -> None:
+    """Persist session to disk after a conversation turn."""
+    try:
+        save_session(thread_id, api_messages)
+    except Exception as e:
+        logger.warning("Failed to auto-save session %s: %s", thread_id, e)
+
+
+# ── Session Management Endpoints ──────────────────────────────────────────
+
+
+@router.get("/sessions")
+async def list_all_sessions():
+    """Return all saved sessions (lightweight index)."""
+    return {"sessions": list_sessions()}
+
+
+@router.get("/sessions/{session_id}")
+async def get_session_by_id(session_id: str):
+    """Return a full session including messages."""
+    session = get_session(session_id)
+    if session is None:
+        raise HTTPException(status_code=404, detail="Session not found")
+    return session
+
+
+@router.delete("/sessions/{session_id}")
+async def delete_session_by_id(session_id: str):
+    """Delete a session."""
+    ok = delete_session(session_id)
+    if not ok:
+        raise HTTPException(status_code=404, detail="Session not found")
+    return {"status": "deleted", "session_id": session_id}
+
+
+# ── Chat Endpoints ────────────────────────────────────────────────────────
 
 
 @router.post("/cancel")
 async def cancel_chat(request: CancelRequest):
     """Cancel a running chat task for a given thread_id."""
-    # Reset the task progress UI and performance trace
     clear_tasks()
     clear_trace()
-    
+
     thread_id = request.thread_id
     if thread_id in RUNNING_TASKS:
         task = RUNNING_TASKS[thread_id]
@@ -69,12 +120,10 @@ async def cancel_chat(request: CancelRequest):
 @router.post("/sync")
 async def chat_sync(request: ChatRequest, background_tasks: BackgroundTasks):
     """Synchronous chat endpoint (waits for full response)."""
-    # Clear previous task progress
     clear_tasks()
-    
-    thread_id = request.thread_id or "default-thread"
-    
-    # Check if a task is already running for this thread
+
+    thread_id = request.thread_id or generate_session_id()
+
     if thread_id in RUNNING_TASKS and not RUNNING_TASKS[thread_id].done():
         logger.warning("Task already running for thread %s, cancelling old one", thread_id)
         RUNNING_TASKS[thread_id].cancel()
@@ -85,7 +134,7 @@ async def chat_sync(request: ChatRequest, background_tasks: BackgroundTasks):
             lc_messages = _convert_messages(request.messages)
             if not lc_messages:
                 raise ValueError("No messages provided")
-            
+
             result = await agent.ainvoke(
                 {"messages": lc_messages},
                 config={"recursion_limit": 50}
@@ -98,32 +147,34 @@ async def chat_sync(request: ChatRequest, background_tasks: BackgroundTasks):
             logger.exception("Agent invocation failed")
             raise e
 
-    # Create and track the task
     task = asyncio.create_task(_run_agent())
     RUNNING_TASKS[thread_id] = task
 
     try:
         result = await task
         response_messages = result.get("messages", [])
-        
-        # Trigger background memory update
+
         if response_messages:
             background_tasks.add_task(update_memory_background, response_messages, request.thread_id)
-            
-        # Get the last AI message
+
         if response_messages and isinstance(response_messages[-1], AIMessage):
             content = response_messages[-1].content
             content_str = content if isinstance(content, str) else str(content)
-            return {"role": "assistant", "content": content_str}
-            
-        return {"role": "assistant", "content": "No response generated."}
+
+            # Auto-save session
+            all_msgs = _to_api_messages(_convert_messages(request.messages))
+            all_msgs.append({"role": "assistant", "content": content_str})
+            _auto_save_session(thread_id, all_msgs)
+
+            return {"role": "assistant", "content": content_str, "thread_id": thread_id}
+
+        return {"role": "assistant", "content": "No response generated.", "thread_id": thread_id}
 
     except asyncio.CancelledError:
-        return {"role": "assistant", "content": "任务已取消。"}
+        return {"role": "assistant", "content": "任务已取消。", "thread_id": thread_id}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     finally:
-        # Cleanup
         if RUNNING_TASKS.get(thread_id) == task:
             del RUNNING_TASKS[thread_id]
 
@@ -131,10 +182,9 @@ async def chat_sync(request: ChatRequest, background_tasks: BackgroundTasks):
 @router.post("/stream")
 async def chat_stream(request: ChatRequest, background_tasks: BackgroundTasks):
     """Server-Sent Events (SSE) streaming endpoint."""
-    # Clear previous task progress
     clear_tasks()
-    
-    thread_id = request.thread_id or "default-thread"
+
+    thread_id = request.thread_id or generate_session_id()
     lc_messages = _convert_messages(request.messages)
     if not lc_messages:
         raise HTTPException(status_code=400, detail="No messages provided")
@@ -143,10 +193,10 @@ async def chat_stream(request: ChatRequest, background_tasks: BackgroundTasks):
         task = asyncio.current_task()
         RUNNING_TASKS[thread_id] = task
         assistant_content = ""
-        
+
         try:
             agent = await make_lead_agent(model_name=request.model)
-            
+
             async for chunk, metadata in agent.astream(
                 {"messages": lc_messages},
                 stream_mode="messages",
@@ -159,12 +209,12 @@ async def chat_stream(request: ChatRequest, background_tasks: BackgroundTasks):
                         "event": "message",
                         "data": json.dumps({"content": chunk_content})
                     }
-                    
+
             yield {
                 "event": "done",
-                "data": json.dumps({"status": "completed"})
+                "data": json.dumps({"status": "completed", "thread_id": thread_id})
             }
-                
+
         except asyncio.CancelledError:
             logger.info("Stream task cancelled for thread %s", thread_id)
             yield {
@@ -179,10 +229,16 @@ async def chat_stream(request: ChatRequest, background_tasks: BackgroundTasks):
             }
         finally:
             if assistant_content.strip() and lc_messages:
+                # Auto-save session
+                api_msgs = _to_api_messages(lc_messages)
+                api_msgs.append({"role": "assistant", "content": assistant_content})
+                _auto_save_session(thread_id, api_msgs)
+
                 update_memory_background(
                     [*lc_messages, AIMessage(content=assistant_content)],
                     thread_id,
                 )
             if RUNNING_TASKS.get(thread_id) == task:
                 del RUNNING_TASKS[thread_id]
+
     return EventSourceResponse(_stream_generator())
