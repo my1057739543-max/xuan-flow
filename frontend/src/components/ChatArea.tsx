@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { Send, Bot, TerminalSquare, ArrowUp, Activity, ChevronDown, XCircle } from "lucide-react";
+import { Send, Bot, TerminalSquare, ArrowUp, Activity, ChevronDown, XCircle, Plus, MessageSquare, Trash2, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -12,7 +12,31 @@ type Message = {
   content: string;
 };
 
+type SessionInfo = {
+  id: string;
+  title: string;
+  created_at: string;
+  updated_at: string;
+  message_count: number;
+};
+
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
+function formatTime(iso: string) {
+  try {
+    const d = new Date(iso);
+    const now = new Date();
+    const diffMs = now.getTime() - d.getTime();
+    const diffMin = Math.floor(diffMs / 60000);
+    if (diffMin < 1) return "Just now";
+    if (diffMin < 60) return `${diffMin}m ago`;
+    const diffHr = Math.floor(diffMin / 60);
+    if (diffHr < 24) return `${diffHr}h ago`;
+    return d.toLocaleDateString();
+  } catch {
+    return "";
+  }
+}
 
 export function ChatArea() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -22,6 +46,12 @@ export function ChatArea() {
   const [selectedModel, setSelectedModel] = useState<string>("");
   const bottomRef = useRef<HTMLDivElement>(null);
 
+  // Session state
+  const [sessions, setSessions] = useState<SessionInfo[]>([]);
+  const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
+  const [sessionDropdownOpen, setSessionDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
   // Broadcast typing status to Sidebar for adaptive polling
   useEffect(() => {
     const channel = new BroadcastChannel("typing_status");
@@ -30,35 +60,98 @@ export function ChatArea() {
   }, [isTyping]);
 
   useEffect(() => {
-    const fetchModels = async () => {
-      try {
-        const res = await fetch(`${API_BASE}/api/management/available_models`);
-        if (res.ok) {
-          const data = await res.json();
-          setAvailableModels(data.models || []);
-          if (data.models && data.models.length > 0) {
-            setSelectedModel(data.models[0].name);
-          }
-        }
-      } catch (e) {
-        console.error("Failed to fetch models", e);
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, isTyping]);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setSessionDropdownOpen(false);
       }
     };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  // Load sessions on mount
+  useEffect(() => {
+    fetchSessions();
     fetchModels();
   }, []);
 
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isTyping]);
+  const fetchModels = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/api/management/available_models`);
+      if (res.ok) {
+        const data = await res.json();
+        setAvailableModels(data.models || []);
+        if (data.models && data.models.length > 0) {
+          setSelectedModel(data.models[0].name);
+        }
+      }
+    } catch (e) {
+      console.error("Failed to fetch models", e);
+    }
+  };
+
+  const fetchSessions = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/api/chat/sessions`);
+      if (res.ok) {
+        const data = await res.json();
+        setSessions(data.sessions || []);
+      }
+    } catch (e) {
+      console.error("Failed to fetch sessions", e);
+    }
+  };
+
+  const loadSession = async (sessionId: string) => {
+    try {
+      const res = await fetch(`${API_BASE}/api/chat/sessions/${sessionId}`);
+      if (res.ok) {
+        const data = await res.json();
+        setMessages(data.messages || []);
+        setCurrentSessionId(sessionId);
+        setSessionDropdownOpen(false);
+      }
+    } catch (e) {
+      console.error("Failed to load session", e);
+    }
+  };
+
+  const newChat = () => {
+    setMessages([]);
+    setCurrentSessionId(null);
+    setSessionDropdownOpen(false);
+  };
+
+  const deleteSession = async (e: React.MouseEvent, sessionId: string) => {
+    e.stopPropagation();
+    try {
+      const res = await fetch(`${API_BASE}/api/chat/sessions/${sessionId}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        if (currentSessionId === sessionId) {
+          setMessages([]);
+          setCurrentSessionId(null);
+        }
+        await fetchSessions();
+      }
+    } catch (error) {
+      console.error("Failed to delete session", error);
+    }
+  };
 
   const handleCancel = async () => {
     try {
       await fetch(`${API_BASE}/api/chat/cancel`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ thread_id: "default-thread" }),
+        body: JSON.stringify({ thread_id: currentSessionId || "default-thread" }),
       });
-      // Small delay to allow backend to process before UI reset if needed
       setIsTyping(false);
     } catch (e) {
       console.error("Failed to cancel task", e);
@@ -71,7 +164,8 @@ export function ChatArea() {
     if (!input.trim() || isTyping) return;
 
     const userMessage: Message = { role: "user", content: input.trim() };
-    setMessages((prev) => [...prev, userMessage]);
+    const updatedMessages = [...messages, userMessage];
+    setMessages(updatedMessages);
     setInput("");
     setIsTyping(true);
 
@@ -80,8 +174,8 @@ export function ChatArea() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          messages: [...messages, userMessage],
-          thread_id: "default-thread",
+          messages: updatedMessages,
+          thread_id: currentSessionId || undefined,
           model: selectedModel || undefined,
         }),
       });
@@ -94,6 +188,7 @@ export function ChatArea() {
       let buffer = "";
       let aiContent = "";
       let hasStarted = false;
+      let responseThreadId: string | null = null;
 
       while (true) {
         const { done, value } = await reader.read();
@@ -117,11 +212,9 @@ export function ChatArea() {
               aiContent += data.content;
 
               if (!hasStarted) {
-                // First chunk: add the message to the list
                 setMessages((prev) => [...prev, { role: "assistant", content: aiContent }]);
                 hasStarted = true;
               } else {
-                // Subsequent chunks: update the last message
                 setMessages((prev) => {
                   const newMessages = [...prev];
                   const lastMsg = newMessages[newMessages.length - 1];
@@ -132,11 +225,21 @@ export function ChatArea() {
                 });
               }
             }
+            if (data.thread_id) {
+              responseThreadId = data.thread_id;
+            }
           } catch (e) {
             // Ignore parse errors
           }
         }
       }
+
+      // After stream completes, update session tracking
+      if (responseThreadId && !currentSessionId) {
+        setCurrentSessionId(responseThreadId);
+      }
+      await fetchSessions();
+
     } catch (error) {
       console.error("Streaming error:", error);
       setMessages((prev) => [...prev, { role: "assistant", content: "Error communicating with context engine." }]);
@@ -152,15 +255,95 @@ export function ChatArea() {
     }
   };
 
+  // Derive current session title
+  const currentSession = sessions.find((s) => s.id === currentSessionId);
+  const dropdownLabel = currentSession ? currentSession.title : "New Chat";
+
   return (
     <div className="flex flex-col h-full w-full relative bg-transparent">
 
       {/* Header Bar */}
       <div className="absolute top-0 w-full px-8 py-5 flex items-center justify-between z-20">
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-3 bg-white/10 border border-white/20 backdrop-blur-xl px-4 py-2 rounded-full shadow-[0_4px_30px_rgba(0,0,0,0.1)]">
-            <TerminalSquare className="w-4 h-4 text-cyan-300 drop-shadow-[0_0_8px_rgba(103,232,249,0.8)]" />
-            <span className="text-[13px] font-semibold text-white drop-shadow-sm">Terminal Context</span>
+          {/* Session Dropdown */}
+          <div className="relative" ref={dropdownRef}>
+            <button
+              onClick={() => setSessionDropdownOpen(!sessionDropdownOpen)}
+              className="flex items-center gap-2 bg-white/10 border border-white/20 backdrop-blur-xl px-4 py-2 rounded-full shadow-[0_4px_30px_rgba(0,0,0,0.1)] hover:bg-white/20 transition-all min-w-[160px]"
+            >
+              <MessageSquare className="w-4 h-4 text-cyan-300 shrink-0 drop-shadow-[0_0_8px_rgba(103,232,249,0.8)]" />
+              <span className="text-[13px] font-semibold text-white truncate drop-shadow-sm max-w-[180px]">
+                {dropdownLabel}
+              </span>
+              <ChevronDown className={cn(
+                "w-3.5 h-3.5 text-white/60 transition-transform shrink-0",
+                sessionDropdownOpen && "rotate-180"
+              )} />
+            </button>
+
+            <AnimatePresence>
+              {sessionDropdownOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -8, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -8, scale: 0.95 }}
+                  transition={{ duration: 0.15 }}
+                  className="absolute top-full mt-2 left-0 w-[320px] max-h-[400px] overflow-y-auto bg-slate-900/95 backdrop-blur-xl border border-white/20 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.5)] z-50 custom-scrollbar"
+                >
+                  {/* New Chat option */}
+                  <button
+                    onClick={newChat}
+                    className={cn(
+                      "w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-white/10 transition-colors border-b border-white/10",
+                      !currentSessionId && "bg-cyan-500/10"
+                    )}
+                  >
+                    <Plus className="w-4 h-4 text-cyan-400" />
+                    <span className="text-[13px] font-semibold text-white">New Chat</span>
+                  </button>
+
+                  {/* Session list */}
+                  {sessions.length === 0 ? (
+                    <div className="px-4 py-6 text-center text-white/40 text-[12px]">
+                      No saved conversations yet.
+                    </div>
+                  ) : (
+                    sessions.map((session) => (
+                      <div
+                        key={session.id}
+                        onClick={() => loadSession(session.id)}
+                        className={cn(
+                          "w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-white/10 transition-colors group border-b border-white/5 last:border-b-0 cursor-pointer",
+                          currentSessionId === session.id && "bg-cyan-500/10"
+                        )}
+                      >
+                        {currentSessionId === session.id ? (
+                          <Check className="w-4 h-4 text-cyan-400 shrink-0" />
+                        ) : (
+                          <MessageSquare className="w-4 h-4 text-white/30 shrink-0" />
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <div className="text-[13px] text-white/90 truncate font-medium">
+                            {session.title}
+                          </div>
+                          <div className="flex items-center gap-2 text-[10px] text-white/40">
+                            <span>{session.message_count} messages</span>
+                            <span>·</span>
+                            <span>{formatTime(session.updated_at)}</span>
+                          </div>
+                        </div>
+                        <button
+                          onClick={(e) => deleteSession(e, session.id)}
+                          className="p-1.5 rounded-lg opacity-0 group-hover:opacity-100 hover:bg-rose-500/20 text-rose-300 transition-all shrink-0"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    ))
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           {availableModels.length > 0 && (
@@ -218,7 +401,6 @@ export function ChatArea() {
                     msg.role === "assistant" ? "items-start" : "items-end"
                   )}
                 >
-                  {/* Subtle Role Label */}
                   <span className={cn(
                     "text-[10px] uppercase tracking-widest font-bold px-3 drop-shadow-md",
                     msg.role === "assistant" ? "text-cyan-300" : "text-fuchsia-300"
@@ -226,7 +408,6 @@ export function ChatArea() {
                     {msg.role === "assistant" ? "Xuan-Flow" : "You"}
                   </span>
 
-                  {/* Message Body */}
                   <div
                     className={cn(
                       "px-7 py-5 text-[15px] max-w-[85%] relative overflow-hidden",
