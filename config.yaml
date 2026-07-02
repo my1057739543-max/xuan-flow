@@ -28,7 +28,7 @@ memory:
   working_memory_path: .xuan-flow/memory.md
   max_facts: 50
   max_injection_facts: 10
-  mysql_enabled: true
+  mysql_enabled: false
   mysql_host: mysql
   mysql_port: 3306
   mysql_user: root
