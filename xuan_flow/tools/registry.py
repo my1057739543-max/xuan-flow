@@ -22,20 +22,22 @@ async def get_available_tools(subagent_enabled: bool = False, exclude_task: bool
     from xuan_flow.tools.skill_creator import create_skill_workflow
     from xuan_flow.tools.skill_runner import run_skill
     from xuan_flow.tools.image_inspector import inspect_image_metadata
+    from xuan_flow.tools.puzzle_hint import puzzle_hint
     from xuan_flow.mcp.tools import get_mcp_tools
 
     tools: list[BaseTool] = [
-        web_search, 
+        web_search,
         web_fetch_content,
-        write_file, 
-        read_file, 
+        write_file,
+        read_file,
         delete_file,
         manage_tasks,
         get_task_list,
-        ask_clarification, 
-        create_skill_workflow, 
+        ask_clarification,
+        create_skill_workflow,
         run_skill,
-        inspect_image_metadata
+        inspect_image_metadata,
+        puzzle_hint,
     ]
 
     if subagent_enabled and not exclude_task:
