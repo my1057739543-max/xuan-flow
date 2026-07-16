@@ -1,0 +1,24 @@
+{
+  "game_id": "crimson-room",
+  "display_name": "Crimson Room",
+  "aliases": [
+    "Crimson Room",
+    "深红房间",
+    "红色房间",
+    "クリムゾンルーム"
+  ],
+  "developer": "Toshimitsu Takagi / TAKAGISM",
+  "release_year": 2004,
+  "genres": [
+    "escape_room",
+    "point_and_click",
+    "classic_flash_puzzle"
+  ],
+  "knowledge_status": "partial_verified",
+  "spoiler_sensitivity": "medium",
+  "summary": "A classic browser-based escape-the-room puzzle game in which the player wakes in a red room, explores fixed camera angles, collects items, solves object-chain puzzles, and escapes through the locked door.",
+  "source_urls": [
+    "https://en.wikipedia.org/wiki/Crimson_Room"
+  ],
+  "coverage_notes": "First real second-layer game entry. Contains verified item/puzzle facts from available sources, not a full unsourced walkthrough."
+}

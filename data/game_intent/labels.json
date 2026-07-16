@@ -1,0 +1,79 @@
+{
+  "hint_request": {
+    "description": "用户想要低剧透提示，不希望直接得到答案。",
+    "domain": "puzzle",
+    "spoiler_level": "low",
+    "needs_game_context": true,
+    "route_to": "hint_agent"
+  },
+  "puzzle_solution": {
+    "description": "用户明确要求谜题、机关、密码或步骤的完整解法。",
+    "domain": "puzzle",
+    "spoiler_level": "high",
+    "needs_game_context": true,
+    "route_to": "puzzle_agent"
+  },
+  "walkthrough_request": {
+    "description": "用户询问主线推进、下一步去哪、流程路线。",
+    "domain": "progression",
+    "spoiler_level": "medium",
+    "needs_game_context": true,
+    "route_to": "walkthrough_agent"
+  },
+  "item_location": {
+    "description": "用户询问钥匙、道具、线索、收集品的位置。",
+    "domain": "item",
+    "spoiler_level": "medium",
+    "needs_game_context": true,
+    "route_to": "item_agent"
+  },
+  "lore_explanation": {
+    "description": "用户询问剧情、结局、世界观、文本线索含义。",
+    "domain": "lore",
+    "spoiler_level": "high",
+    "needs_game_context": true,
+    "route_to": "lore_agent"
+  },
+  "character_query": {
+    "description": "用户询问角色身份、动机、关系或角色相关剧情。",
+    "domain": "character",
+    "spoiler_level": "medium",
+    "needs_game_context": true,
+    "route_to": "lore_agent"
+  },
+  "mechanic_explanation": {
+    "description": "用户询问游戏机制、操作、规则、系统说明。",
+    "domain": "mechanic",
+    "spoiler_level": "none",
+    "needs_game_context": true,
+    "route_to": "mechanic_agent"
+  },
+  "spoiler_control": {
+    "description": "用户主要表达剧透控制偏好，如不要剧透、只提示一点。",
+    "domain": "preference",
+    "spoiler_level": "low",
+    "needs_game_context": false,
+    "route_to": "spoiler_guard"
+  },
+  "bug_or_stuck": {
+    "description": "用户怀疑 bug、事件无法触发、卡死、无法交互。",
+    "domain": "troubleshooting",
+    "spoiler_level": "medium",
+    "needs_game_context": true,
+    "route_to": "debug_agent"
+  },
+  "game_recommendation": {
+    "description": "用户请求推荐单机解谜、叙事、密室、推理类游戏。",
+    "domain": "recommendation",
+    "spoiler_level": "none",
+    "needs_game_context": false,
+    "route_to": "recommendation_agent"
+  },
+  "meta_chat": {
+    "description": "闲聊、能力询问、非游戏问题或无法归入游戏任务的问题。",
+    "domain": "meta",
+    "spoiler_level": "none",
+    "needs_game_context": false,
+    "route_to": "general_agent"
+  }
+}

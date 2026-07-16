@@ -1,0 +1,22 @@
+{
+  "game_id": "chants-of-sennaar",
+  "display_name": "Chants of Sennaar",
+  "aliases": [
+    "Chants of Sennaar",
+    "Sennaar"
+  ],
+  "developer": "Rundisc",
+  "release_year": 2023,
+  "genres": [
+    "language_puzzle",
+    "adventure",
+    "deduction"
+  ],
+  "knowledge_status": "partial_verified",
+  "spoiler_sensitivity": "high",
+  "summary": "A language-deciphering adventure inspired by the Tower of Babel myth, where the Traveler translates fictional scripts and reconnects separated peoples.",
+  "source_urls": [
+    "https://en.wikipedia.org/wiki/Chants_of_Sennaar"
+  ],
+  "coverage_notes": "Second-layer entry covers translation mechanics and non-spoilery workflow. It avoids full glyph dictionaries and late plot answers."
+}

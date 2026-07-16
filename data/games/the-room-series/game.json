@@ -1,0 +1,23 @@
+{
+  "game_id": "the-room-series",
+  "display_name": "The Room",
+  "aliases": [
+    "The Room",
+    "The Room series",
+    "The Room Old Sins"
+  ],
+  "developer": "Fireproof Games",
+  "release_year": 2012,
+  "genres": [
+    "escape_room",
+    "mechanical_puzzle",
+    "box_puzzle"
+  ],
+  "knowledge_status": "partial_verified",
+  "spoiler_sensitivity": "medium",
+  "summary": "A tactile 3D puzzle-box game centered on manipulating physical mechanisms, hidden compartments, keys, lenses, and Null-related secrets.",
+  "source_urls": [
+    "https://en.wikipedia.org/wiki/The_Room_%28video_game%29"
+  ],
+  "coverage_notes": "Second-layer entry covers core first-game mechanics and representative puzzle patterns, not every chapter-specific box solution."
+}

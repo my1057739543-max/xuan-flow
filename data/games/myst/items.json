@@ -1,0 +1,66 @@
+[
+  {
+    "item_id": "linking_books",
+    "name": "Linking Books",
+    "aliases": [
+      "linking book",
+      "book",
+      "Age book"
+    ],
+    "location": "Hidden or found through mechanisms on Myst Island and in the library.",
+    "acquisition_hint": "Books are not ordinary reading material; they can transport the player to Ages.",
+    "uses": [
+      "Travel to self-contained Ages such as Selenitic, Stoneship, Mechanical, and Channelwood."
+    ],
+    "chapter": "myst_island",
+    "location_area": "library_and_mechanisms",
+    "spoiler_level": "medium",
+    "source_urls": [
+      "https://en.wikipedia.org/wiki/Myst",
+      "https://en.wikipedia.org/wiki/Myst_%28series%29"
+    ],
+    "verification": "source_verified"
+  },
+  {
+    "item_id": "red_blue_pages",
+    "name": "Red and Blue Pages",
+    "aliases": [
+      "red page",
+      "blue page",
+      "missing page"
+    ],
+    "location": "Found across Ages and returned to the corresponding trap books.",
+    "acquisition_hint": "Each Age contains pages tied to the red or blue prison books.",
+    "uses": [
+      "Restores clearer communication with Sirrus or Achenar."
+    ],
+    "chapter": "ages",
+    "location_area": "age_exploration",
+    "spoiler_level": "high",
+    "source_urls": [
+      "https://en.wikipedia.org/wiki/Myst"
+    ],
+    "verification": "source_verified"
+  },
+  {
+    "item_id": "green_book_page",
+    "name": "Atrus Page",
+    "aliases": [
+      "green book page",
+      "white page",
+      "final page"
+    ],
+    "location": "Hidden on Myst Island as part of the final decision path.",
+    "acquisition_hint": "The green book is important, but acting on it too early can lead to a bad outcome.",
+    "uses": [
+      "Allows Atrus to complete the Myst book in the good ending route."
+    ],
+    "chapter": "finale",
+    "location_area": "myst_island",
+    "spoiler_level": "high",
+    "source_urls": [
+      "https://en.wikipedia.org/wiki/Myst"
+    ],
+    "verification": "source_verified"
+  }
+]

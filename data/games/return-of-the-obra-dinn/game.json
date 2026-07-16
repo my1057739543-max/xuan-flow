@@ -1,0 +1,23 @@
+{
+  "game_id": "return-of-the-obra-dinn",
+  "display_name": "Return of the Obra Dinn",
+  "aliases": [
+    "Return of the Obra Dinn",
+    "Obra Dinn"
+  ],
+  "developer": "Lucas Pope / 3909 LLC",
+  "release_year": 2018,
+  "genres": [
+    "deduction",
+    "mystery",
+    "logic_puzzle"
+  ],
+  "knowledge_status": "partial_verified",
+  "spoiler_sensitivity": "very_high",
+  "summary": "A first-person deduction game about investigating a ghost ship, using the Memento Mortem to reconstruct death scenes and determine the identities and fates of sixty people.",
+  "source_urls": [
+    "https://obradinn.com/",
+    "https://en.wikipedia.org/wiki/Return_of_the_Obra_Dinn"
+  ],
+  "coverage_notes": "Second-layer entry covers investigation mechanics and non-spoilery deduction workflow. It does not store the full fate table."
+}

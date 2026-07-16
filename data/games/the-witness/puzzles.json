@@ -1,0 +1,71 @@
+[
+  {
+    "puzzle_id": "basic_path_rule",
+    "name": "Basic Path Drawing Rule",
+    "aliases": [
+      "start node",
+      "endpoint",
+      "path"
+    ],
+    "chapter": "tutorial_and_all",
+    "location": "panels",
+    "route_to": "mechanic_agent",
+    "hint_layers": [
+      "Every panel solution begins at a round node.",
+      "The line must end at a rounded endpoint and cannot cross itself.",
+      "Other symbols add extra constraints on top of this basic rule."
+    ],
+    "solution": "Draw a continuous non-self-intersecting path from a round start node to a rounded endpoint while satisfying all panel-specific rules.",
+    "spoiler_level": "low",
+    "source_urls": [
+      "https://en.wikipedia.org/wiki/The_Witness_%282016_video_game%29"
+    ],
+    "verification": "source_verified"
+  },
+  {
+    "puzzle_id": "learn_rules_from_sequence",
+    "name": "Learning Rules Without Text",
+    "aliases": [
+      "tutorial panels",
+      "rule learning",
+      "sequence"
+    ],
+    "chapter": "regions",
+    "location": "panel_clusters",
+    "route_to": "hint_agent",
+    "hint_layers": [
+      "The game teaches rules by arranging panels in a sequence.",
+      "Compare the simplest panel with the next changed panel.",
+      "When a new symbol appears, solve nearby easier examples before jumping to a complex panel."
+    ],
+    "solution": "Infer the rule by solving ordered panel clusters where each new panel changes one constraint at a time.",
+    "spoiler_level": "medium",
+    "source_urls": [
+      "https://en.wikipedia.org/wiki/The_Witness_%282016_video_game%29"
+    ],
+    "verification": "source_verified"
+  },
+  {
+    "puzzle_id": "environmental_clues",
+    "name": "Environmental Clue Panels",
+    "aliases": [
+      "tree branch",
+      "environment clue",
+      "hidden path"
+    ],
+    "chapter": "regions",
+    "location": "environment",
+    "route_to": "hint_agent",
+    "hint_layers": [
+      "Not every rule is inside the grid.",
+      "Look around the panel; nearby shapes, branches, shadows, or terrain may encode the missing constraint.",
+      "Try translating the observed environmental pattern into the grid path."
+    ],
+    "solution": "Use nearby environmental information as part of the puzzle rule, then draw a path that matches both the panel symbols and the observed pattern.",
+    "spoiler_level": "medium",
+    "source_urls": [
+      "https://en.wikipedia.org/wiki/The_Witness_%282016_video_game%29"
+    ],
+    "verification": "source_verified"
+  }
+]

@@ -1,0 +1,65 @@
+[
+  {
+    "item_id": "notebook",
+    "name": "Notebook",
+    "aliases": [
+      "journal",
+      "glyph notebook",
+      "translation notebook"
+    ],
+    "location": "Core translation interface used throughout the game.",
+    "acquisition_hint": "Record guessed meanings for encountered graphemes and revise them as new context appears.",
+    "uses": [
+      "Stores graphemes, guessed meanings, and later verified translations."
+    ],
+    "chapter": "all",
+    "location_area": "interface",
+    "spoiler_level": "low",
+    "source_urls": [
+      "https://en.wikipedia.org/wiki/Chants_of_Sennaar"
+    ],
+    "verification": "source_verified"
+  },
+  {
+    "item_id": "graphemes",
+    "name": "Graphemes",
+    "aliases": [
+      "glyph",
+      "symbol",
+      "word"
+    ],
+    "location": "Signs, dialogue, labels, terminals, and environmental writing.",
+    "acquisition_hint": "A grapheme meaning is usually inferred from context, gestures, signs, or repeated usage.",
+    "uses": [
+      "Forms fictional language vocabulary and sentence logic."
+    ],
+    "chapter": "all",
+    "location_area": "tower",
+    "spoiler_level": "low",
+    "source_urls": [
+      "https://en.wikipedia.org/wiki/Chants_of_Sennaar"
+    ],
+    "verification": "source_verified"
+  },
+  {
+    "item_id": "translation_tests",
+    "name": "Notebook Validation Tests",
+    "aliases": [
+      "validation",
+      "test page",
+      "drawing match"
+    ],
+    "location": "Notebook pages after enough graphemes are encountered.",
+    "acquisition_hint": "Match graphemes to drawings to confirm guessed meanings.",
+    "uses": [
+      "Locks in correct translations and reveals real meanings."
+    ],
+    "chapter": "all",
+    "location_area": "notebook",
+    "spoiler_level": "medium",
+    "source_urls": [
+      "https://en.wikipedia.org/wiki/Chants_of_Sennaar"
+    ],
+    "verification": "source_verified"
+  }
+]

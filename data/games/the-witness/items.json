@@ -1,0 +1,65 @@
+[
+  {
+    "item_id": "panel_paths",
+    "name": "Panel Paths",
+    "aliases": [
+      "maze panel",
+      "grid",
+      "path"
+    ],
+    "location": "Panels throughout the island.",
+    "acquisition_hint": "Not inventory; every panel requires drawing a valid path.",
+    "uses": [
+      "Primary puzzle interaction across the game."
+    ],
+    "chapter": "all_regions",
+    "location_area": "panels",
+    "spoiler_level": "low",
+    "source_urls": [
+      "https://en.wikipedia.org/wiki/The_Witness_%282016_video_game%29"
+    ],
+    "verification": "source_verified"
+  },
+  {
+    "item_id": "power_cables",
+    "name": "Power Cables",
+    "aliases": [
+      "cable",
+      "wire",
+      "yellow cable"
+    ],
+    "location": "Between solved panels and region devices.",
+    "acquisition_hint": "Follow lit cables to understand what a solved panel activated.",
+    "uses": [
+      "Show progression and guide players toward the next panel or regional objective."
+    ],
+    "chapter": "all_regions",
+    "location_area": "environment",
+    "spoiler_level": "low",
+    "source_urls": [
+      "https://en.wikipedia.org/wiki/The_Witness_%282016_video_game%29"
+    ],
+    "verification": "source_verified"
+  },
+  {
+    "item_id": "yellow_boxes_turrets",
+    "name": "Yellow Boxes / Turrets",
+    "aliases": [
+      "yellow box",
+      "laser",
+      "turret"
+    ],
+    "location": "Regional endpoints around the island.",
+    "acquisition_hint": "A region usually culminates in activating its yellow box after solving its local panel chain.",
+    "uses": [
+      "Direct lights toward the mountain and contribute to unlocking final progression."
+    ],
+    "chapter": "regions",
+    "location_area": "regional_endpoints",
+    "spoiler_level": "medium",
+    "source_urls": [
+      "https://en.wikipedia.org/wiki/The_Witness_%282016_video_game%29"
+    ],
+    "verification": "source_verified"
+  }
+]

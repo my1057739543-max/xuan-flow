@@ -22,6 +22,22 @@ async def get_available_tools(subagent_enabled: bool = False, exclude_task: bool
     from xuan_flow.tools.skill_creator import create_skill_workflow
     from xuan_flow.tools.skill_runner import run_skill
     from xuan_flow.tools.image_inspector import inspect_image_metadata
+    from xuan_flow.tools.game_intent import classify_game_intent
+    from xuan_flow.tools.game_knowledge import (
+        get_game_profile,
+        list_supported_games,
+        search_game_items,
+        search_game_lore,
+        search_game_puzzles,
+        search_game_walkthrough,
+        search_supported_games,
+    )
+    from xuan_flow.tools.game_context import (
+        clear_game_context,
+        get_game_context,
+        list_game_contexts,
+        update_game_context,
+    )
     from xuan_flow.tools.puzzle_hint import puzzle_hint
     from xuan_flow.mcp.tools import get_mcp_tools
 
@@ -37,13 +53,25 @@ async def get_available_tools(subagent_enabled: bool = False, exclude_task: bool
         create_skill_workflow,
         run_skill,
         inspect_image_metadata,
+        classify_game_intent,
+        list_supported_games,
+        search_supported_games,
+        get_game_profile,
+        search_game_items,
+        search_game_puzzles,
+        search_game_walkthrough,
+        search_game_lore,
+        list_game_contexts,
+        get_game_context,
+        update_game_context,
+        clear_game_context,
         puzzle_hint,
     ]
 
     if subagent_enabled and not exclude_task:
         from xuan_flow.tools.task_tool import task
         tools.append(task)
-        
+
     # Asynchronously load MCP tools (no-op or returns cache if ready)
     if not exclude_task:
         try:

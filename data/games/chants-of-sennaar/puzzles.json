@@ -1,0 +1,71 @@
+[
+  {
+    "puzzle_id": "infer_glyph_meaning",
+    "name": "Inferring a Glyph Meaning",
+    "aliases": [
+      "glyph meaning",
+      "translate word",
+      "grapheme"
+    ],
+    "chapter": "all",
+    "location": "tower",
+    "route_to": "hint_agent",
+    "hint_layers": [
+      "Do not translate a symbol from one appearance only.",
+      "Collect context: gesture, object nearby, sentence position, and repeated pairings.",
+      "Write a tentative meaning in the notebook and revise it when contradictions appear."
+    ],
+    "solution": "Infer grapheme meanings by combining contextual clues, repeated usage, NPC behavior, signs, and notebook validation tests.",
+    "spoiler_level": "low",
+    "source_urls": [
+      "https://en.wikipedia.org/wiki/Chants_of_Sennaar"
+    ],
+    "verification": "source_verified"
+  },
+  {
+    "puzzle_id": "syntax_and_plural_rules",
+    "name": "Understanding Syntax and Plurals",
+    "aliases": [
+      "syntax",
+      "plural",
+      "grammar"
+    ],
+    "chapter": "languages",
+    "location": "tower_levels",
+    "route_to": "mechanic_agent",
+    "hint_layers": [
+      "A language may not put words in the same order as yours.",
+      "Check whether repeated words or a separate marker changes number.",
+      "Use sentence patterns rather than isolated words."
+    ],
+    "solution": "Compare repeated sentences to infer word order and plural marking, then apply that grammar to new inscriptions.",
+    "spoiler_level": "medium",
+    "source_urls": [
+      "https://en.wikipedia.org/wiki/Chants_of_Sennaar"
+    ],
+    "verification": "source_verified"
+  },
+  {
+    "puzzle_id": "bridge_cultures",
+    "name": "Translating Between Peoples",
+    "aliases": [
+      "tribes",
+      "terminal",
+      "translate between languages"
+    ],
+    "chapter": "mid_to_late",
+    "location": "tower",
+    "route_to": "lore_agent",
+    "hint_layers": [
+      "The translation problem is social as well as linguistic.",
+      "Look for concepts shared by two groups even if their scripts differ.",
+      "Use verified meanings to connect requests, barriers, and cultural goals."
+    ],
+    "solution": "Use confirmed vocabulary and cultural context to translate between tower peoples and help reconnect groups separated by language.",
+    "spoiler_level": "high",
+    "source_urls": [
+      "https://en.wikipedia.org/wiki/Chants_of_Sennaar"
+    ],
+    "verification": "source_verified_general"
+  }
+]

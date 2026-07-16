@@ -1,0 +1,23 @@
+{
+  "game_id": "myst",
+  "display_name": "Myst",
+  "aliases": [
+    "Myst",
+    "Myst Island"
+  ],
+  "developer": "Cyan",
+  "release_year": 1993,
+  "genres": [
+    "classic_adventure",
+    "puzzle_adventure",
+    "environmental_puzzle"
+  ],
+  "knowledge_status": "partial_verified",
+  "spoiler_sensitivity": "medium",
+  "summary": "A first-person point-and-click adventure about exploring Myst Island, reading clues, using linking books, and solving interconnected environmental puzzles across several Ages.",
+  "source_urls": [
+    "https://en.wikipedia.org/wiki/Myst",
+    "https://en.wikipedia.org/wiki/Myst_%28series%29"
+  ],
+  "coverage_notes": "Second-layer entry covers core objects, Ages, and high-level puzzle flow. It avoids full exact solutions for every Age."
+}

@@ -1,0 +1,71 @@
+[
+  {
+    "puzzle_id": "reconstruct_death_scene",
+    "name": "Reconstructing a Death Scene",
+    "aliases": [
+      "death scene",
+      "memory",
+      "corpse"
+    ],
+    "chapter": "investigation",
+    "location": "ship",
+    "route_to": "mechanic_agent",
+    "hint_layers": [
+      "Use the watch on a corpse or trace.",
+      "Listen before looking; the pre-death audio often gives names or context.",
+      "After entering the frozen scene, inspect positions, uniforms, weapons, and sight lines."
+    ],
+    "solution": "Use Memento Mortem on a corpse, listen to the final audio, inspect the frozen scene, then record identity and fate evidence in the logbook.",
+    "spoiler_level": "low",
+    "source_urls": [
+      "https://en.wikipedia.org/wiki/Return_of_the_Obra_Dinn"
+    ],
+    "verification": "source_verified"
+  },
+  {
+    "puzzle_id": "identify_sixty_souls",
+    "name": "Identifying the Sixty Souls",
+    "aliases": [
+      "fates",
+      "identity",
+      "crew roster"
+    ],
+    "chapter": "full_game",
+    "location": "logbook",
+    "route_to": "puzzle_agent",
+    "hint_layers": [
+      "Do not solve one person in isolation; solve clusters.",
+      "Use jobs, nationalities, ranks, relationships, and who appears together.",
+      "When three fates lock in together, use that confirmation to narrow the next group."
+    ],
+    "solution": "Combine the roster, sketches, deck plans, dialogue, and death scenes to determine each person's name, fate, killer or location if alive.",
+    "spoiler_level": "medium",
+    "source_urls": [
+      "https://en.wikipedia.org/wiki/Return_of_the_Obra_Dinn"
+    ],
+    "verification": "source_verified_general"
+  },
+  {
+    "puzzle_id": "avoid_over_spoiling",
+    "name": "Low-Spoiler Deduction Assistance",
+    "aliases": [
+      "hint only",
+      "no spoiler",
+      "deduction hint"
+    ],
+    "chapter": "full_game",
+    "location": "any",
+    "route_to": "hint_agent",
+    "hint_layers": [
+      "Ask for the chapter, corpse, or page number before giving an identity.",
+      "Prefer evidence categories over final names.",
+      "Only reveal a name or fate when the player explicitly asks for the answer."
+    ],
+    "solution": "For low-spoiler help, return evidence prompts and elimination logic rather than the final identity or fate.",
+    "spoiler_level": "low",
+    "source_urls": [
+      "https://en.wikipedia.org/wiki/Return_of_the_Obra_Dinn"
+    ],
+    "verification": "design_policy"
+  }
+]

@@ -1,0 +1,405 @@
+{
+  "version": "1.0",
+  "updated_at": "2026-07-16",
+  "scope": "mainstream single-player puzzle, mystery, deduction, escape-room, and puzzle-adventure games",
+  "games": [
+    {
+      "game_id": "crimson-room",
+      "display_name": "Crimson Room",
+      "aliases": [
+        "Crimson Room",
+        "深红房间",
+        "红色房间",
+        "密室逃脱 Crimson Room"
+      ],
+      "genres": [
+        "escape_room",
+        "point_and_click",
+        "classic_flash_puzzle"
+      ],
+      "routes": [
+        "hint_agent",
+        "puzzle_agent",
+        "item_agent",
+        "walkthrough_agent",
+        "lore_agent"
+      ],
+      "spoiler_sensitivity": "medium",
+      "knowledge_status": "partial_verified",
+      "summary": "Classic browser-based escape-the-room puzzle game about waking in a red room, collecting objects, solving item-chain puzzles, and escaping through the locked door.",
+      "source_urls": [
+        "https://en.wikipedia.org/wiki/Crimson_Room"
+      ]
+    },
+    {
+      "game_id": "the-room-series",
+      "display_name": "The Room",
+      "aliases": [
+        "The Room",
+        "The Room series",
+        "The Room Old Sins"
+      ],
+      "genres": [
+        "escape_room",
+        "mechanical_puzzle",
+        "box_puzzle"
+      ],
+      "routes": [
+        "hint_agent",
+        "puzzle_agent",
+        "item_agent",
+        "mechanic_agent"
+      ],
+      "spoiler_sensitivity": "medium",
+      "knowledge_status": "partial_verified",
+      "summary": "A tactile 3D puzzle-box game centered on manipulating physical mechanisms, hidden compartments, keys, lenses, and Null-related secrets.",
+      "source_urls": [
+        "https://en.wikipedia.org/wiki/The_Room_%28video_game%29"
+      ]
+    },
+    {
+      "game_id": "myst",
+      "display_name": "Myst",
+      "aliases": [
+        "Myst",
+        "Myst Island"
+      ],
+      "genres": [
+        "classic_adventure",
+        "puzzle_adventure",
+        "environmental_puzzle"
+      ],
+      "routes": [
+        "hint_agent",
+        "puzzle_agent",
+        "item_agent",
+        "walkthrough_agent",
+        "lore_agent"
+      ],
+      "spoiler_sensitivity": "medium",
+      "knowledge_status": "partial_verified",
+      "summary": "A first-person point-and-click adventure about exploring Myst Island, reading clues, using linking books, and solving interconnected environmental puzzles across several Ages.",
+      "source_urls": [
+        "https://en.wikipedia.org/wiki/Myst",
+        "https://en.wikipedia.org/wiki/Myst_%28series%29"
+      ]
+    },
+    {
+      "game_id": "the-witness",
+      "display_name": "The Witness",
+      "aliases": [
+        "The Witness"
+      ],
+      "genres": [
+        "open_world_puzzle",
+        "symbol_puzzle",
+        "logic_puzzle"
+      ],
+      "routes": [
+        "hint_agent",
+        "puzzle_agent",
+        "walkthrough_agent",
+        "mechanic_agent"
+      ],
+      "spoiler_sensitivity": "medium",
+      "knowledge_status": "partial_verified",
+      "summary": "An open-world first-person puzzle game set on an island, built around self-taught panel rules, environmental observation, and nonverbal puzzle progression.",
+      "source_urls": [
+        "https://en.wikipedia.org/wiki/The_Witness_%282016_video_game%29",
+        "https://arxiv.org/abs/1804.10193"
+      ]
+    },
+    {
+      "game_id": "return-of-the-obra-dinn",
+      "display_name": "Return of the Obra Dinn",
+      "aliases": [
+        "Return of the Obra Dinn",
+        "Obra Dinn"
+      ],
+      "genres": [
+        "deduction",
+        "mystery",
+        "logic_puzzle"
+      ],
+      "routes": [
+        "hint_agent",
+        "puzzle_agent",
+        "lore_agent",
+        "debug_agent"
+      ],
+      "spoiler_sensitivity": "very_high",
+      "knowledge_status": "partial_verified",
+      "summary": "A first-person deduction game about investigating a ghost ship, using the Memento Mortem to reconstruct death scenes and determine the identities and fates of sixty people.",
+      "source_urls": [
+        "https://obradinn.com/",
+        "https://en.wikipedia.org/wiki/Return_of_the_Obra_Dinn"
+      ]
+    },
+    {
+      "game_id": "chants-of-sennaar",
+      "display_name": "Chants of Sennaar",
+      "aliases": [
+        "Chants of Sennaar",
+        "Sennaar"
+      ],
+      "genres": [
+        "language_puzzle",
+        "adventure",
+        "deduction"
+      ],
+      "routes": [
+        "hint_agent",
+        "puzzle_agent",
+        "lore_agent",
+        "mechanic_agent"
+      ],
+      "spoiler_sensitivity": "high",
+      "knowledge_status": "partial_verified",
+      "summary": "A language-deciphering adventure inspired by the Tower of Babel myth, where the Traveler translates fictional scripts and reconnects separated peoples.",
+      "source_urls": [
+        "https://en.wikipedia.org/wiki/Chants_of_Sennaar"
+      ]
+    },
+    {
+      "game_id": "rusty-lake-series",
+      "display_name": "Rusty Lake / Cube Escape series",
+      "aliases": [
+        "锈湖",
+        "绣湖",
+        "Rusty Lake",
+        "Cube Escape",
+        "方块逃脱"
+      ],
+      "genres": [
+        "escape_room",
+        "puzzle",
+        "surreal_mystery"
+      ],
+      "routes": [
+        "hint_agent",
+        "puzzle_agent",
+        "item_agent",
+        "lore_agent",
+        "walkthrough_agent"
+      ],
+      "spoiler_sensitivity": "high",
+      "knowledge_status": "catalog_only",
+      "summary": "Surreal escape-room puzzle series with recurring lore, rooms, item chains, and symbolic story threads.",
+      "source_urls": [
+        "https://en.wikipedia.org/wiki/Cube_Escape",
+        "https://en.wikipedia.org/wiki/Rusty_Lake_Hotel",
+        "https://en.wikipedia.org/wiki/The_White_Door"
+      ]
+    },
+    {
+      "game_id": "case-of-the-golden-idol",
+      "display_name": "The Case of the Golden Idol",
+      "aliases": [
+        "金偶像谜案",
+        "Golden Idol",
+        "黄金像案件",
+        "金神像"
+      ],
+      "genres": [
+        "deduction",
+        "murder_mystery",
+        "logic_puzzle"
+      ],
+      "routes": [
+        "hint_agent",
+        "puzzle_agent",
+        "lore_agent",
+        "walkthrough_agent"
+      ],
+      "spoiler_sensitivity": "very_high",
+      "knowledge_status": "catalog_only",
+      "summary": "Detective deduction game where players collect clues and complete case logic across connected deaths.",
+      "source_urls": [
+        "https://en.wikipedia.org/wiki/The_Case_of_the_Golden_Idol"
+      ]
+    },
+    {
+      "game_id": "rise-of-the-golden-idol",
+      "display_name": "The Rise of the Golden Idol",
+      "aliases": [
+        "金偶像崛起",
+        "Rise of the Golden Idol",
+        "黄金像崛起"
+      ],
+      "genres": [
+        "deduction",
+        "murder_mystery",
+        "logic_puzzle"
+      ],
+      "routes": [
+        "hint_agent",
+        "puzzle_agent",
+        "lore_agent",
+        "walkthrough_agent"
+      ],
+      "spoiler_sensitivity": "very_high",
+      "knowledge_status": "catalog_only",
+      "summary": "Sequel to Golden Idol, continuing the scene-based deduction structure in a later time period.",
+      "source_urls": [
+        "https://en.wikipedia.org/wiki/The_Rise_of_the_Golden_Idol"
+      ]
+    },
+    {
+      "game_id": "lorelei-and-the-laser-eyes",
+      "display_name": "Lorelei and the Laser Eyes",
+      "aliases": [
+        "Lorelei and the Laser Eyes",
+        "洛蕾莱与激光眼",
+        "Lorelei"
+      ],
+      "genres": [
+        "puzzle_adventure",
+        "mystery",
+        "symbol_puzzle"
+      ],
+      "routes": [
+        "hint_agent",
+        "puzzle_agent",
+        "lore_agent",
+        "walkthrough_agent"
+      ],
+      "spoiler_sensitivity": "very_high",
+      "knowledge_status": "catalog_only",
+      "summary": "Nonlinear hotel mystery with dense symbol, number, maze, and meta-narrative puzzle structure.",
+      "source_urls": [
+        "https://annapurnainteractive.com/en/games/lorelei-and-the-laser-eyes",
+        "https://simogo.com/work/loreleiandthelasereyes/",
+        "https://en.wikipedia.org/wiki/Lorelei_and_the_Laser_Eyes"
+      ]
+    },
+    {
+      "game_id": "outer-wilds",
+      "display_name": "Outer Wilds",
+      "aliases": [
+        "Outer Wilds",
+        "星际拓荒"
+      ],
+      "genres": [
+        "mystery",
+        "exploration",
+        "knowledge_puzzle"
+      ],
+      "routes": [
+        "hint_agent",
+        "walkthrough_agent",
+        "lore_agent",
+        "debug_agent"
+      ],
+      "spoiler_sensitivity": "very_high",
+      "knowledge_status": "catalog_only",
+      "summary": "Exploration mystery structured around learning, time-loop knowledge, alien ruins, and environmental clues.",
+      "source_urls": [
+        "https://en.wikipedia.org/wiki/Outer_Wilds"
+      ]
+    },
+    {
+      "game_id": "blue-prince",
+      "display_name": "Blue Prince",
+      "aliases": [
+        "Blue Prince",
+        "蓝王子"
+      ],
+      "genres": [
+        "puzzle_adventure",
+        "roguelike_puzzle",
+        "mansion_mystery"
+      ],
+      "routes": [
+        "hint_agent",
+        "puzzle_agent",
+        "item_agent",
+        "walkthrough_agent",
+        "lore_agent"
+      ],
+      "spoiler_sensitivity": "high",
+      "knowledge_status": "catalog_only",
+      "summary": "Puzzle adventure about drafting rooms in a shifting mansion and pursuing Room 46 across runs.",
+      "source_urls": [
+        "https://en.wikipedia.org/wiki/Blue_Prince"
+      ]
+    },
+    {
+      "game_id": "animal-well",
+      "display_name": "Animal Well",
+      "aliases": [
+        "Animal Well",
+        "动物井"
+      ],
+      "genres": [
+        "puzzle_platformer",
+        "metroidvania",
+        "secret_hunting"
+      ],
+      "routes": [
+        "hint_agent",
+        "puzzle_agent",
+        "item_agent",
+        "walkthrough_agent"
+      ],
+      "spoiler_sensitivity": "high",
+      "knowledge_status": "catalog_only",
+      "summary": "Layered puzzle-platformer/metroidvania with nonlinear rooms, secrets, tools, and hidden puzzle layers.",
+      "source_urls": [
+        "https://bigmode.com/games/animal-well",
+        "https://en.wikipedia.org/wiki/Animal_Well",
+        "https://zh.wikipedia.org/wiki/%E5%8A%A8%E7%89%A9%E4%BA%95"
+      ]
+    },
+    {
+      "game_id": "talos-principle-2",
+      "display_name": "The Talos Principle 2",
+      "aliases": [
+        "The Talos Principle 2",
+        "塔罗斯的法则2",
+        "塔洛斯法则2"
+      ],
+      "genres": [
+        "first_person_puzzle",
+        "philosophical_scifi",
+        "logic_puzzle"
+      ],
+      "routes": [
+        "hint_agent",
+        "puzzle_agent",
+        "lore_agent",
+        "mechanic_agent"
+      ],
+      "spoiler_sensitivity": "medium",
+      "knowledge_status": "catalog_only",
+      "summary": "First-person puzzle-adventure using lasers, connectors, spatial logic, and philosophical sci-fi narrative.",
+      "source_urls": [
+        "https://en.wikipedia.org/wiki/The_Talos_Principle_2"
+      ]
+    },
+    {
+      "game_id": "cocoon",
+      "display_name": "Cocoon",
+      "aliases": [
+        "Cocoon",
+        "茧"
+      ],
+      "genres": [
+        "puzzle_adventure",
+        "worlds_within_worlds",
+        "environmental_puzzle"
+      ],
+      "routes": [
+        "hint_agent",
+        "puzzle_agent",
+        "walkthrough_agent",
+        "mechanic_agent"
+      ],
+      "spoiler_sensitivity": "medium",
+      "knowledge_status": "catalog_only",
+      "summary": "Puzzle adventure about carrying and entering orb-worlds, using nested-world logic to solve environmental puzzles.",
+      "source_urls": [
+        "https://en.wikipedia.org/wiki/Cocoon_%28video_game%29"
+      ]
+    }
+  ]
+}
