@@ -1,10 +1,11 @@
-# Xuan-Flow
+﻿# Xuan-Flow
 .env
 .xuan-flow/
 __pycache__/
 *.pyc
 .venv/
 .codegraph/
+models/
 
 self-introduction.md
 xuan-flow-agent-interview.md
@@ -13,3 +14,4 @@ xuan_flow.egg-info/PKG-INFO
 xuan_flow.egg-info/SOURCES.txt
 xuan_flow.egg-info/requires.txt
 xuan_flow.egg-info/top_level.txt
+

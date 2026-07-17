@@ -1,0 +1,65 @@
+[
+  {
+    "item_id": "memento_mortem",
+    "name": "Memento Mortem",
+    "aliases": [
+      "watch",
+      "pocket watch",
+      "death watch"
+    ],
+    "location": "Given to the investigator as the core supernatural investigation tool.",
+    "acquisition_hint": "Use it near corpses or remains to access a frozen moment of death.",
+    "uses": [
+      "Replay audio before death and inspect the frozen death scene."
+    ],
+    "chapter": "investigation",
+    "location_area": "ship",
+    "spoiler_level": "low",
+    "source_urls": [
+      "https://en.wikipedia.org/wiki/Return_of_the_Obra_Dinn"
+    ],
+    "verification": "source_verified"
+  },
+  {
+    "item_id": "logbook",
+    "name": "Logbook",
+    "aliases": [
+      "book",
+      "crew roster",
+      "ship map"
+    ],
+    "location": "Investigator inventory.",
+    "acquisition_hint": "Use it after every memory to record identities, fates, and locations.",
+    "uses": [
+      "Tracks crew roster, sketches, deck plans, and fate entries."
+    ],
+    "chapter": "investigation",
+    "location_area": "inventory",
+    "spoiler_level": "low",
+    "source_urls": [
+      "https://en.wikipedia.org/wiki/Return_of_the_Obra_Dinn"
+    ],
+    "verification": "source_verified"
+  },
+  {
+    "item_id": "crew_sketch",
+    "name": "Crew Sketch",
+    "aliases": [
+      "drawing",
+      "portrait",
+      "sketch"
+    ],
+    "location": "Inside the logbook.",
+    "acquisition_hint": "Cross-reference faces with scenes, uniforms, jobs, accents, and relationships.",
+    "uses": [
+      "Helps identify people by face and context."
+    ],
+    "chapter": "investigation",
+    "location_area": "logbook",
+    "spoiler_level": "low",
+    "source_urls": [
+      "https://en.wikipedia.org/wiki/Return_of_the_Obra_Dinn"
+    ],
+    "verification": "source_verified"
+  }
+]

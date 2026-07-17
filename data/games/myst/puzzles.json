@@ -1,0 +1,72 @@
+[
+  {
+    "puzzle_id": "find_age_books",
+    "name": "Finding the Age Books",
+    "aliases": [
+      "Age book",
+      "linking book",
+      "island puzzle"
+    ],
+    "chapter": "myst_island",
+    "location": "island",
+    "route_to": "walkthrough_agent",
+    "hint_layers": [
+      "Myst Island is the hub; most major mechanisms point toward access to another Age.",
+      "Read books and environmental clues before forcing mechanisms.",
+      "If a device changes the environment, check whether it opened a path to a linking book."
+    ],
+    "solution": "Explore Myst Island, solve its mechanisms, and use the revealed linking books to enter the Ages.",
+    "spoiler_level": "medium",
+    "source_urls": [
+      "https://en.wikipedia.org/wiki/Myst"
+    ],
+    "verification": "source_verified_general"
+  },
+  {
+    "puzzle_id": "collect_pages_from_ages",
+    "name": "Collecting Pages Across Ages",
+    "aliases": [
+      "red blue pages",
+      "pages",
+      "Ages"
+    ],
+    "chapter": "ages",
+    "location": "multiple_ages",
+    "route_to": "puzzle_agent",
+    "hint_layers": [
+      "Each Age is self-contained and has its own logic chain.",
+      "Look for readable journals and environmental clues before searching for pages.",
+      "Return pages to the corresponding books only when you understand the consequence."
+    ],
+    "solution": "Visit each Age, solve its logical puzzle sequence, retrieve red or blue pages, and return them to Myst Island.",
+    "spoiler_level": "high",
+    "source_urls": [
+      "https://en.wikipedia.org/wiki/Myst"
+    ],
+    "verification": "source_verified"
+  },
+  {
+    "puzzle_id": "final_choice_books",
+    "name": "Final Book Choice",
+    "aliases": [
+      "Sirrus",
+      "Achenar",
+      "Atrus",
+      "green book"
+    ],
+    "chapter": "finale",
+    "location": "library",
+    "route_to": "lore_agent",
+    "hint_layers": [
+      "Do not trust every imprisoned voice equally.",
+      "The red and blue books are not the only important books in the library.",
+      "The green book route matters for the best outcome."
+    ],
+    "solution": "Avoid freeing Sirrus or Achenar; use the green book path and bring Atrus the missing page to reach the favorable ending.",
+    "spoiler_level": "high",
+    "source_urls": [
+      "https://en.wikipedia.org/wiki/Myst"
+    ],
+    "verification": "source_verified"
+  }
+]

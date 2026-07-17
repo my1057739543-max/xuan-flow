@@ -1,0 +1,64 @@
+[
+  {
+    "item_id": "small_key",
+    "name": "Small Key",
+    "aliases": [
+      "key",
+      "small key"
+    ],
+    "location": "Found from opened compartments during box progression.",
+    "acquisition_hint": "Inspect movable panels, drawers, and keyholes on the puzzle box.",
+    "uses": [
+      "Unlocks matching locks or compartments on the box."
+    ],
+    "chapter": "early_boxes",
+    "location_area": "puzzle_box",
+    "spoiler_level": "medium",
+    "source_urls": [
+      "https://en.wikipedia.org/wiki/The_Room_%28video_game%29"
+    ],
+    "verification": "source_verified_general"
+  },
+  {
+    "item_id": "eyepiece_lens",
+    "name": "Special Lens / Eyepiece",
+    "aliases": [
+      "lens",
+      "eyepiece",
+      "Null lens"
+    ],
+    "location": "Acquired as a key inventory element during early progression.",
+    "acquisition_hint": "After receiving the lens, equip it whenever a surface or symbol looks incomplete.",
+    "uses": [
+      "Reveals Null-related marks and hidden alignment symbols."
+    ],
+    "chapter": "early_boxes",
+    "location_area": "inventory",
+    "spoiler_level": "low",
+    "source_urls": [
+      "https://en.wikipedia.org/wiki/The_Room_%28video_game%29"
+    ],
+    "verification": "source_verified"
+  },
+  {
+    "item_id": "notes",
+    "name": "Research Notes",
+    "aliases": [
+      "letter",
+      "note",
+      "journal"
+    ],
+    "location": "Found while solving the puzzle boxes.",
+    "acquisition_hint": "Read notes when a new box or compartment opens; they often explain the Null story context.",
+    "uses": [
+      "Provide story context and mood rather than direct full solutions."
+    ],
+    "chapter": "all",
+    "location_area": "box_compartments",
+    "spoiler_level": "low",
+    "source_urls": [
+      "https://en.wikipedia.org/wiki/The_Room_%28video_game%29"
+    ],
+    "verification": "source_verified_general"
+  }
+]

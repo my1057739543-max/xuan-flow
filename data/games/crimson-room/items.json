@@ -1,0 +1,104 @@
+[
+  {
+    "item_id": "golden_key",
+    "name": "Golden Key",
+    "aliases": [
+      "gold key",
+      "金钥匙",
+      "钥匙"
+    ],
+    "location": "Under the pillow on the bed.",
+    "acquisition_hint": "The bed and pillow are interactable; inspect the pillow instead of only looking around the room.",
+    "uses": [
+      "Unlocks a previously locked drawer in the desk."
+    ],
+    "chapter": "single_room",
+    "location_area": "bed",
+    "spoiler_level": "medium",
+    "source_urls": [
+      "https://en.wikipedia.org/wiki/Crimson_Room"
+    ],
+    "verification": "source_verified"
+  },
+  {
+    "item_id": "power_cord",
+    "name": "Power Cord",
+    "aliases": [
+      "cord",
+      "电源线",
+      "电线"
+    ],
+    "location": "Inside a drawer unlocked with the golden key.",
+    "acquisition_hint": "Use the key found under the pillow on the locked drawer.",
+    "uses": [
+      "Powers the stereo on top of the desk."
+    ],
+    "chapter": "single_room",
+    "location_area": "desk",
+    "spoiler_level": "medium",
+    "source_urls": [
+      "https://en.wikipedia.org/wiki/Crimson_Room"
+    ],
+    "verification": "source_verified"
+  },
+  {
+    "item_id": "screwdriver",
+    "name": "Screwdriver",
+    "aliases": [
+      "螺丝刀",
+      "改锥"
+    ],
+    "location": "Collected later after the room's puzzles are solved.",
+    "acquisition_hint": "The source verifies that the screwdriver is obtained near the end, but this database does not yet include every prerequisite puzzle.",
+    "uses": [
+      "Used on the locked door's doorknob to escape."
+    ],
+    "chapter": "single_room",
+    "location_area": "final_door",
+    "spoiler_level": "high",
+    "source_urls": [
+      "https://en.wikipedia.org/wiki/Crimson_Room"
+    ],
+    "verification": "partial_source_verified"
+  },
+  {
+    "item_id": "pillow",
+    "name": "Pillow",
+    "aliases": [
+      "枕头"
+    ],
+    "location": "On the bed.",
+    "acquisition_hint": "Not an inventory item; lifting it reveals the golden key.",
+    "uses": [
+      "Hides the golden key."
+    ],
+    "chapter": "single_room",
+    "location_area": "bed",
+    "spoiler_level": "low",
+    "source_urls": [
+      "https://en.wikipedia.org/wiki/Crimson_Room"
+    ],
+    "verification": "source_verified"
+  },
+  {
+    "item_id": "stereo",
+    "name": "Stereo",
+    "aliases": [
+      "音响",
+      "收音机",
+      "stereo player"
+    ],
+    "location": "On top of the desk.",
+    "acquisition_hint": "It needs power before it can be used.",
+    "uses": [
+      "Can be powered with the power cord and turned on."
+    ],
+    "chapter": "single_room",
+    "location_area": "desk",
+    "spoiler_level": "medium",
+    "source_urls": [
+      "https://en.wikipedia.org/wiki/Crimson_Room"
+    ],
+    "verification": "source_verified"
+  }
+]

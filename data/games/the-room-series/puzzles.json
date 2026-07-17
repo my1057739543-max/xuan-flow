@@ -1,0 +1,71 @@
+[
+  {
+    "puzzle_id": "inspect_box_surfaces",
+    "name": "Finding Hidden Compartments",
+    "aliases": [
+      "hidden compartment",
+      "box surface",
+      "drawer"
+    ],
+    "chapter": "early_boxes",
+    "location": "puzzle_box",
+    "route_to": "hint_agent",
+    "hint_layers": [
+      "Treat the box as a physical object: rotate it and inspect every face.",
+      "Look for seams, buttons, sliders, and panels that can move.",
+      "Use keys only after matching the lock shape and position."
+    ],
+    "solution": "Rotate the puzzle box, inspect each face, interact with movable mechanisms, and use matching keys to open hidden compartments.",
+    "spoiler_level": "medium",
+    "source_urls": [
+      "https://en.wikipedia.org/wiki/The_Room_%28video_game%29"
+    ],
+    "verification": "source_verified_general"
+  },
+  {
+    "puzzle_id": "use_eyepiece_null",
+    "name": "Using the Eyepiece",
+    "aliases": [
+      "eyepiece",
+      "lens",
+      "Null"
+    ],
+    "chapter": "early_boxes",
+    "location": "puzzle_box",
+    "route_to": "mechanic_agent",
+    "hint_layers": [
+      "If an engraving or symbol seems incomplete, the normal view may not be enough.",
+      "Equip the eyepiece and re-check suspicious surfaces.",
+      "Some secrets require changing your viewing angle until the symbol aligns."
+    ],
+    "solution": "Equip the special lens to reveal Null-related hidden markings, then rotate or align the view until the hidden symbol becomes coherent.",
+    "spoiler_level": "medium",
+    "source_urls": [
+      "https://en.wikipedia.org/wiki/The_Room_%28video_game%29"
+    ],
+    "verification": "source_verified"
+  },
+  {
+    "puzzle_id": "box_within_box_progression",
+    "name": "Opening Nested Puzzle Boxes",
+    "aliases": [
+      "nested box",
+      "unlock box",
+      "chapter progression"
+    ],
+    "chapter": "all",
+    "location": "puzzle_box",
+    "route_to": "walkthrough_agent",
+    "hint_layers": [
+      "The goal is usually not one lock; it is a chain of mechanisms.",
+      "Every solved lock tends to reveal a smaller or more complex mechanism.",
+      "When stuck, revisit old faces after new compartments open."
+    ],
+    "solution": "Fully unlock the current box by solving its mechanism chain; each solved layer exposes a smaller or more complex box inside.",
+    "spoiler_level": "medium",
+    "source_urls": [
+      "https://en.wikipedia.org/wiki/The_Room_%28video_game%29"
+    ],
+    "verification": "source_verified"
+  }
+]

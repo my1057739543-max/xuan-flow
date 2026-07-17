@@ -1,0 +1,97 @@
+[
+  {
+    "puzzle_id": "pillow_key",
+    "name": "Finding the Golden Key",
+    "aliases": [
+      "key under pillow",
+      "枕头钥匙",
+      "金钥匙"
+    ],
+    "chapter": "single_room",
+    "location": "bed",
+    "route_to": "hint_agent",
+    "hint_layers": [
+      "Start by treating ordinary furniture as searchable, not just decorative.",
+      "The bed has an object that can be lifted or moved.",
+      "Check under the pillow."
+    ],
+    "solution": "Lift the pillow on the bed to reveal and collect the golden key.",
+    "spoiler_level": "medium",
+    "source_urls": [
+      "https://en.wikipedia.org/wiki/Crimson_Room"
+    ],
+    "verification": "source_verified"
+  },
+  {
+    "puzzle_id": "locked_drawer_power_cord",
+    "name": "Unlocking the Drawer for the Power Cord",
+    "aliases": [
+      "locked drawer",
+      "power cord",
+      "抽屉",
+      "电源线"
+    ],
+    "chapter": "single_room",
+    "location": "desk",
+    "route_to": "item_agent",
+    "hint_layers": [
+      "A found key usually belongs to a nearby lock rather than the exit door.",
+      "Inspect the desk drawers after obtaining the key.",
+      "Use the golden key on the locked drawer."
+    ],
+    "solution": "Use the golden key on the previously locked desk drawer, then collect the power cord inside.",
+    "spoiler_level": "medium",
+    "source_urls": [
+      "https://en.wikipedia.org/wiki/Crimson_Room"
+    ],
+    "verification": "source_verified"
+  },
+  {
+    "puzzle_id": "power_stereo",
+    "name": "Powering the Stereo",
+    "aliases": [
+      "stereo",
+      "power stereo",
+      "音响",
+      "电源线"
+    ],
+    "chapter": "single_room",
+    "location": "desk",
+    "route_to": "puzzle_agent",
+    "hint_layers": [
+      "The device on the desk is not usable until it has power.",
+      "Use the newly found cord with the device on top of the desk.",
+      "After connecting the cord, turn the stereo on."
+    ],
+    "solution": "Use the power cord on the stereo on top of the desk, then click the stereo's power button.",
+    "spoiler_level": "medium",
+    "source_urls": [
+      "https://en.wikipedia.org/wiki/Crimson_Room"
+    ],
+    "verification": "source_verified"
+  },
+  {
+    "puzzle_id": "final_door_screwdriver",
+    "name": "Escaping Through the Door",
+    "aliases": [
+      "screwdriver door",
+      "doorknob",
+      "螺丝刀",
+      "门把手"
+    ],
+    "chapter": "single_room",
+    "location": "door",
+    "route_to": "puzzle_agent",
+    "hint_layers": [
+      "The exit is not opened by simply turning the knob.",
+      "The final tool interacts with the door hardware rather than the keyhole.",
+      "Use the screwdriver on the door's doorknob."
+    ],
+    "solution": "After solving the room's puzzles and collecting the screwdriver, use it on the locked door's doorknob to escape.",
+    "spoiler_level": "high",
+    "source_urls": [
+      "https://en.wikipedia.org/wiki/Crimson_Room"
+    ],
+    "verification": "partial_source_verified"
+  }
+]

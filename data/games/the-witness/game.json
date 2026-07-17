@@ -1,0 +1,22 @@
+{
+  "game_id": "the-witness",
+  "display_name": "The Witness",
+  "aliases": [
+    "The Witness"
+  ],
+  "developer": "Thekla, Inc.",
+  "release_year": 2016,
+  "genres": [
+    "open_world_puzzle",
+    "symbol_puzzle",
+    "logic_puzzle"
+  ],
+  "knowledge_status": "partial_verified",
+  "spoiler_sensitivity": "medium",
+  "summary": "An open-world first-person puzzle game set on an island, built around self-taught panel rules, environmental observation, and nonverbal puzzle progression.",
+  "source_urls": [
+    "https://en.wikipedia.org/wiki/The_Witness_%282016_video_game%29",
+    "https://arxiv.org/abs/1804.10193"
+  ],
+  "coverage_notes": "Second-layer entry covers core mechanics and representative rule types, not individual panel answers."
+}
